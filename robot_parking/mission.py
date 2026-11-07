@@ -23,15 +23,19 @@ from rclpy.node import Node
 from std_msgs.msg import String, Bool
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
 
 from robot_parking.carte import PLAQUES, PLACES_OCCUPEES, calculer_places, point_approche
+from robot_parking.lecture_plaque import lire_plaque_image
 
-DUREE_LECTURE = 1.5   # s : temps pour "lire" la plaque une fois arrivé
+DUREE_LECTURE = 1.0   # s : on attend que l'image soit stable avant de lire
+ESSAIS_MAX = 3        # nombre d'images essayées si la lecture échoue
 
 
-def lire_plaque(place):
-    """SIMULATION de la vision : renvoie la plaque de la voiture garée sur 'place'.
-    -> À REMPLACER par le résultat de la caméra + YOLO (membre vision)."""
+def lire_plaque_simulee(place):
+    """Ancienne lecture SIMULÉE (tableau PLAQUES) : sert maintenant de VÉRITÉ pour contrôler."""
     return PLAQUES.get(place)
 
 
@@ -44,6 +48,14 @@ class Mission(Node):
         self.create_subscription(Odometry, '/odom', self.recevoir_odom, 10)
         self.pub_but = self.create_publisher(PoseStamped, '/goal_pose', 10)
         self.pub_etat = self.create_publisher(String, '/mission_etat', 10)
+
+        # Vision V3 : 'camera' = vraie lecture ; 'simulee' = ancien tableau (pour comparer)
+        self.declare_parameter('lecture', 'camera')
+        self.create_subscription(Image, '/camera/image_raw', self.recevoir_image,
+                                 qos_profile_sensor_data)
+        self.pont = CvBridge()
+        self.derniere_image = None
+        self.essais = 0
 
         self.places = calculer_places()
         self.position = None
@@ -66,6 +78,21 @@ class Mission(Node):
         p = msg.pose.pose.position
         self.position = (p.x, p.y)
 
+    def recevoir_image(self, msg):
+        self.derniere_image = msg                        # on garde seulement la plus récente
+
+    def lire_plaque(self):
+        """Lecture de la plaque devant le robot : par la CAMÉRA (vision V2)
+        ou, si le paramètre lecture = 'simulee', par l'ancien tableau."""
+        if self.get_parameter('lecture').value == 'simulee':
+            return lire_plaque_simulee(self.place_actuelle)
+        if self.derniere_image is None:
+            self.get_logger().warn('Aucune image de la caméra !')
+            return None
+        image = self.pont.imgmsg_to_cv2(self.derniere_image, desired_encoding='bgr8')
+        texte, _ = lire_plaque_image(image)
+        return texte
+
     def recevoir_mission(self, msg):
         demande = msg.data.strip().upper()
         if demande in self.places:                       # c'est un nom de place
@@ -83,6 +110,7 @@ class Mission(Node):
         if self.etat == 'EN_ROUTE' and msg.data:
             self.etat = 'LECTURE'
             self.debut_lecture = self.get_clock().now()
+            self.essais = 0
             self.annoncer(f'Arrivé devant {self.place_actuelle}, lecture de la plaque...')
 
     # ---------- Déroulement ----------
@@ -115,11 +143,19 @@ class Mission(Node):
         if self.etat != 'LECTURE':
             return
         if (self.get_clock().now() - self.debut_lecture).nanoseconds * 1e-9 < DUREE_LECTURE:
-            return                                       # on "lit" encore
+            return                                       # on attend une image stable
 
-        plaque = lire_plaque(self.place_actuelle)
-        lu = plaque if plaque else 'place vide'
-        self.annoncer(f'Place {self.place_actuelle} : {lu}')
+        plaque = self.lire_plaque()
+        if plaque is None and self.essais < ESSAIS_MAX - 1:
+            self.essais += 1                             # lecture ratée : on réessaie
+            self.debut_lecture = self.get_clock().now()  # sur une nouvelle image
+            self.get_logger().info(f'Plaque illisible, nouvel essai ({self.essais + 1}/{ESSAIS_MAX})')
+            return
+
+        # contrôle : on compare avec la vérité (tableau PLAQUES)
+        verite = lire_plaque_simulee(self.place_actuelle)
+        controle = '✅' if plaque == verite else f'❌ (vraie : {verite})'
+        self.annoncer(f'Place {self.place_actuelle} : caméra lit {plaque or "rien"}  {controle}')
 
         if self.plaque_cherchee is None:                 # mission "aller à une place"
             self.etat = 'FINI'

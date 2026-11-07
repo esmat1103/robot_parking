@@ -24,7 +24,7 @@ import pytesseract
 LARG, HAUT = 600, 150            # taille de la plaque une fois redressée (pixels)
 
 # Zones de la plaque redressée (en fraction de la largeur / hauteur)
-ZONE_NUMERO = (0.03, 0.42)       # à gauche
+ZONE_NUMERO = (0.03, 0.38)       # à gauche (0,42 mordait sur le début de تونس)
 ZONE_SERIE = (0.66, 0.97)        # à droite
 ZONE_HAUTEUR = (0.15, 0.85)      # on enlève le cadre blanc en haut et en bas
 
@@ -114,6 +114,7 @@ def lire_plaque_image(image):
         cv2.resize(plaque, (LARG, HAUT)),
         np.hstack([cv2.resize(img_num, (LARG // 2, h)), cv2.resize(img_serie, (LARG // 2, h))]),
     ])
-    if not numero or not serie:
+    # format tunisien : numéro ≤ 4 chiffres, série ≤ 3 (sinon nouvel essai)
+    if not (1 <= len(numero) <= 4) or not (1 <= len(serie) <= 3):
         return None, controle
     return f'{serie} TUN {numero}', controle

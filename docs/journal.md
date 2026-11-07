@@ -259,3 +259,16 @@ au moment où le robot s'arrête face à la place.
 
 **Leçon :** la vraie cause était la **prise de vue** (position d'arrêt), pas l'algorithme de lecture.
 **Limite :** testé sur 10 images de simulation (police nette, éclairage parfait) ; à revalider sur la maquette.
+
+---
+
+## Vision — V3 : lecture caméra branchée dans la mission · ✅
+
+- `mission.py` lit la plaque sur **l'image de la caméra** (`lire_plaque_image`) au lieu du tableau ;
+  le tableau `PLAQUES` sert seulement de **contrôle** (✅ / ❌) ; jusqu'à 3 essais si illisible ;
+  paramètre `lecture:=simulee` pour revenir à l'ancienne lecture
+- 1ʳᵉ mission : 8/9 justes (A4 lu « 77414 » : la zone du numéro mordait sur تونس)
+  → zone réduite (42 → 38 %) + **contrôle du format tunisien** (numéro ≤ 4 chiffres, série ≤ 3)
+- 2ᵉ mission « 199 TUN 8125 » : **9/9 plaques lues justes par la caméra**, véhicule trouvé en D6, tournée ≈ 79 s
+
+**Le robot ne triche plus : il décide « trouvé / pas trouvé » à partir de ce que lit sa caméra.**
