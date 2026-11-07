@@ -23,6 +23,10 @@ import pytesseract
 
 LARG, HAUT = 600, 150            # taille de la plaque une fois redressée (pixels)
 
+# Plaque de la voiture JUSTE DEVANT (robot à 25 cm) : ≈ 30 % de la largeur de l'image.
+# Les plaques des voitures au loin (vues à travers une place vide) : ≈ 9 %.
+LARGEUR_MIN = 0.15
+
 # Zones de la plaque redressée (en fraction de la largeur / hauteur)
 ZONE_NUMERO = (0.03, 0.38)       # à gauche (0,42 mordait sur le début de تونس)
 ZONE_SERIE = (0.66, 0.97)        # à droite
@@ -52,6 +56,8 @@ def trouver_plaque(image):
         rapport = w / h
         if aire < 0.002 * aire_image or not (2.5 < rapport < 6.5):
             continue                                     # trop petit ou mauvaise forme
+        if w < LARGEUR_MIN * image.shape[1]:
+            continue                                     # plaque AU LOIN (autre rangée) : ignorée
         if cv2.contourArea(c) < 0.6 * aire:
             continue                                     # pas assez rectangulaire
         coins = cv2.boxPoints(cv2.minAreaRect(c))

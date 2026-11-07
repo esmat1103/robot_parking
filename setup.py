@@ -48,7 +48,8 @@ setup(
             'securite = robot_parking.securite:main',
             'mission = robot_parking.mission:main',
             'collecteur = robot_parking.collecteur:main',         # vision V1
-            'tester_lecture = robot_parking.tester_lecture:main', # NOUVEAU (vision V2)
+            'tester_lecture = robot_parking.tester_lecture:main', # vision V2
+            'tester_yolo = robot_parking.tester_yolo:main',       # NOUVEAU (vision V4)
         ],
     },
 )

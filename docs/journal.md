@@ -272,3 +272,27 @@ au moment où le robot s'arrête face à la place.
 - 2ᵉ mission « 199 TUN 8125 » : **9/9 plaques lues justes par la caméra**, véhicule trouvé en D6, tournée ≈ 79 s
 
 **Le robot ne triche plus : il décide « trouvé / pas trouvé » à partir de ce que lit sa caméra.**
+
+---
+
+## Vision — V4 : détection de voiture YOLOv8 (pré-entraîné, sans entraînement) · ✅
+
+- `vision_yolo.py` : YOLOv8 COCO (classes car / truck / bus = « véhicule »), on garde le véhicule
+  **juste devant** (rectangle ≥ 20 % de la largeur de l'image et centré)
+- comparaison sur les 10 images (`tester_yolo`) :
+
+| Modèle | Seuil | Détectées | Confiance | Temps |
+|---|---|---|---|---|
+| yolov8n | 0,30 | 7/10 | 0,34 – 0,80 | ≈ 55 ms |
+| yolov8n | 0,15 | 8/10 | 0,15 – 0,29 | ≈ 70 ms |
+| **yolov8s** | **0,30** | **9/10** | **0,36 – 0,91** | ≈ 125 ms |
+
+  → **yolov8s retenu**. Limites : COCO ne distingue pas citadine / SUV / berline (le SUV était vu comme
+  « bus ») ; B6 (citadine verte) jamais détectée
+- dans la mission : **YOLO voit un véhicule OU une plaque lisible devant → place occupée**, sinon **vide**
+- piège découvert : à travers une place vide (C3), la caméra voit les voitures de la rangée D **au loin**,
+  avec leurs plaques → fausse lecture. Correction : **la taille, c'est la distance**
+  (plaque ≥ 15 % de l'image, véhicule ≥ 20 %)
+- tests : C3 vide ✅, B6 occupée grâce à la plaque ✅, D2 détectée par YOLOv8s ✅
+- installation : PyTorch CPU + `numpy<2` (sinon cv_bridge casse) ; après un `pip install`, si `colcon build`
+  échoue sur setuptools → `python3 -m pip uninstall -y setuptools`

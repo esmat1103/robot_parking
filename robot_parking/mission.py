@@ -29,6 +29,7 @@ from cv_bridge import CvBridge
 
 from robot_parking.carte import PLAQUES, PLACES_OCCUPEES, calculer_places, point_approche
 from robot_parking.lecture_plaque import lire_plaque_image
+from robot_parking.vision_yolo import detecter_voiture, charger_modele
 
 DUREE_LECTURE = 1.0   # s : on attend que l'image soit stable avant de lire
 ESSAIS_MAX = 3        # nombre d'images essayées si la lecture échoue
@@ -56,6 +57,7 @@ class Mission(Node):
         self.pont = CvBridge()
         self.derniere_image = None
         self.essais = 0
+        charger_modele()             # YOLOv8n chargé une fois au démarrage (~1 s)
 
         self.places = calculer_places()
         self.position = None
@@ -90,7 +92,22 @@ class Mission(Node):
             self.get_logger().warn('Aucune image de la caméra !')
             return None
         image = self.pont.imgmsg_to_cv2(self.derniere_image, desired_encoding='bgr8')
+
+        # V4 : y a-t-il un véhicule devant le robot ? (YOLOv8s)
+        vehicule, _ = detecter_voiture(image)
+        # V2 : lecture de la plaque
         texte, _ = lire_plaque_image(image)
+
+        if vehicule is not None:
+            self.get_logger().info(f"YOLO : {vehicule['classe']} détecté "
+                                   f"(confiance {vehicule['confiance']:.2f})")
+        elif texte is not None:
+            # sécurité : YOLO n'a rien vu, mais une plaque est lisible devant le robot
+            # -> il y a forcément une voiture (cas de B6 dans nos tests)
+            self.get_logger().info('YOLO : rien vu, mais une plaque est lue -> place occupée')
+        else:
+            self.get_logger().info(f'YOLO : aucun véhicule devant {self.place_actuelle}')
+            return 'VIDE'
         return texte
 
     def recevoir_mission(self, msg):
@@ -152,10 +169,13 @@ class Mission(Node):
             self.get_logger().info(f'Plaque illisible, nouvel essai ({self.essais + 1}/{ESSAIS_MAX})')
             return
 
-        # contrôle : on compare avec la vérité (tableau PLAQUES)
-        verite = lire_plaque_simulee(self.place_actuelle)
+        # contrôle : on compare avec la vérité (tableau PLAQUES ; pas d'entrée = place vide)
+        verite = lire_plaque_simulee(self.place_actuelle) or 'VIDE'
         controle = '✅' if plaque == verite else f'❌ (vraie : {verite})'
-        self.annoncer(f'Place {self.place_actuelle} : caméra lit {plaque or "rien"}  {controle}')
+        if plaque == 'VIDE':
+            self.annoncer(f'Place {self.place_actuelle} : vide (aucun véhicule vu par YOLO)  {controle}')
+        else:
+            self.annoncer(f'Place {self.place_actuelle} : caméra lit {plaque or "rien"}  {controle}')
 
         if self.plaque_cherchee is None:                 # mission "aller à une place"
             self.etat = 'FINI'
