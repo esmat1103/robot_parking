@@ -7,7 +7,7 @@ dans un parking (maquette à l'échelle) grâce à la vision, puis s'y rend de f
 
 <p align="center">
   <img src="docs/images/etape3_gazebo.png" width="480" alt="Robot dans le parking Gazebo">
-  <img src="docs/images/etape3_rviz.png" width="300" alt="Robot sur la carte dans RViz">
+  <img src="docs/images/etape4_astar.png" width="340" alt="Chemin A* dans RViz">
 </p>
 
 ## Avancement
@@ -17,7 +17,7 @@ dans un parking (maquette à l'échelle) grâce à la vision, puis s'y rend de f
 | 1 | Package ROS 2 `robot_parking` + Git | ✅ |
 | 2 | Carte de la maquette (`.pgm` / `.yaml`) affichée dans RViz | ✅ |
 | 3 | Robot simulé dans le parking Gazebo, pilotage clavier | ✅ |
-| 4 | Planification A* publiée sur `/plan` | ⏳ |
+| 4 | Planification A* publiée sur `/plan` | ✅ |
 | 5 | Suivi de chemin jusqu'à une place | ⏳ |
 | 6 | Arrêt de sécurité (capteur de distance) | ⏳ |
 | 7 | Mission complète place par place | ⏳ |

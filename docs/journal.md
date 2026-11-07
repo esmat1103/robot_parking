@@ -68,3 +68,30 @@ Les étapes suivantes remplacent le clavier par du code (A*, suivi de chemin, s�
 
 **Appris :** URDF (links, joints, plugins Gazebo), `robot_state_publisher`, arbre TF
 `map → odom → base_footprint → base_link`, `use_sim_time`, plugin `diff_drive`, capteur `ray` → `/scan`.
+
+---
+
+## Étape 4 — Planification A* dans RViz · ✅
+
+**Objectif :** calculer automatiquement le plus court chemin sûr vers une destination (« décider où aller »).
+
+**Fait :**
+- `astar.py` (sans ROS, testable seul) :
+  - `gonfler()` : agrandit les obstacles de 15 cm (demi-diagonale du robot 12 cm + marge 3 cm)
+    → A* peut traiter le robot comme un **point**
+  - `astar()` : grille 8-voisins, heuristique octile, interdiction de couper les coins
+  - `case_libre_proche()` : si on clique sur un obstacle, on vise la case libre la plus proche
+- `planificateur.py` (nœud ROS 2) : écoute `/map`, `/odom`, `/goal_pose` → publie `/plan` et `/carte_securite`
+- lancé automatiquement par `simulation.launch.py`
+
+**Résultat :** clic « 2D Goal Pose » dans RViz → chemin orange en quelques millisecondes.
+
+| A* dans RViz (zone de sécurité en bleu clair) | Test hors ROS (3 destinations) |
+|---|---|
+| ![astar](images/etape4_astar.png) | ![test](images/etape4_test_hors_ros.png) |
+
+**Limite observée :** le chemin longe le bord de la zone de sécurité et fait de petits « escaliers »
+(grille 8 directions) → sera lissé à l'étape 5 avant le suivi.
+
+**Appris :** A* (f = g + h, heuristique admissible), gonflement d'obstacles / espace des configurations,
+OccupancyGrid (ligne 0 = bas, valeurs 0/100/-1), nav_msgs/Path, QoS Transient Local, paramètres ROS.
