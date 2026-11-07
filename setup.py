@@ -46,7 +46,8 @@ setup(
             'planificateur = robot_parking.planificateur:main',
             'suiveur = robot_parking.suiveur:main',
             'securite = robot_parking.securite:main',
-            'mission = robot_parking.mission:main',               # NOUVEAU (étape 7)
+            'mission = robot_parking.mission:main',
+            'collecteur = robot_parking.collecteur:main',         # NOUVEAU (vision V1)
         ],
     },
 )

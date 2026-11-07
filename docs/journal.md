@@ -227,3 +227,12 @@ et la caméra voit sa plaque **176 تونس 5530**.
 (pas de miroir) → images exploitables pour entraîner YOLO / la lecture des chiffres.
 
 ![camera plaque](images/vision_B_camera_plaque.png)
+
+---
+
+## Vision — V1 : collecte d'images · ✅
+
+- `collecteur.py` : écoute `/mission_etat` ; à chaque « Arrivé devant X », enregistre l'image
+  de la caméra dans `~/parking_ws/dataset/sim/X.png` (0,5 s après, image stable)
+- mission avec une plaque inexistante → le robot visite les 10 voitures → **10 images en ≈ 75 s**
+- les images restent hors du dépôt (`~/parking_ws/dataset/`)
