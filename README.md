@@ -9,6 +9,9 @@ dans un parking (maquette à l'échelle) grâce à la vision, puis s'y rend de f
   <img src="docs/images/etape3_gazebo.png" width="480" alt="Robot dans le parking Gazebo">
   <img src="docs/images/etape4_astar.png" width="340" alt="Chemin A* dans RViz">
 </p>
+<p align="center">
+  <img src="docs/images/etape5_suivi.gif" width="720" alt="Suivi autonome du chemin">
+</p>
 
 ## Avancement
 
@@ -18,8 +21,8 @@ dans un parking (maquette à l'échelle) grâce à la vision, puis s'y rend de f
 | 2 | Carte de la maquette (`.pgm` / `.yaml`) affichée dans RViz | ✅ |
 | 3 | Robot simulé dans le parking Gazebo, pilotage clavier | ✅ |
 | 4 | Planification A* publiée sur `/plan` | ✅ |
-| 5 | Suivi de chemin jusqu'à une place | ⏳ |
-| 6 | Arrêt de sécurité (capteur de distance) | ⏳ |
+| 5 | Suivi de chemin jusqu'à une place | ✅ |
+| 6 | Arrêt de sécurité (capteur de distance) | ✅ |
 | 7 | Mission complète place par place | ⏳ |
 | ★ | Bonus : DWA / piétons, PPO, SLAM, Nav2 | ⏳ |
 

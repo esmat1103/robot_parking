@@ -95,3 +95,54 @@ Les étapes suivantes remplacent le clavier par du code (A*, suivi de chemin, s�
 
 **Appris :** A* (f = g + h, heuristique admissible), gonflement d'obstacles / espace des configurations,
 OccupancyGrid (ligne 0 = bas, valeurs 0/100/-1), nav_msgs/Path, QoS Transient Local, paramètres ROS.
+
+---
+
+## Étape 5 — Suivi autonome du chemin · ✅
+
+**Objectif :** remplacer le clavier par un programme (« conduire »).
+
+**Fait :**
+- lissage (`simplifier()` dans `astar.py`) : depuis chaque point, saut au point le plus lointain
+  atteignable en ligne droite sans toucher la zone de sécurité → les « escaliers » disparaissent
+- `suiveur.py` : 20 fois par seconde, vise le prochain point ; pivote sur place si l'écart d'angle
+  dépasse 20°, sinon avance (ralentit près du point) ; point suivant à moins de 4 cm ; arrêt au dernier
+- `/plan_brut` (gris) et `/plan` lissé (orange) affichés dans RViz
+
+**Résultat :** chemin A* de 2,56 m (112 cases, 26 ms) → lissé en **9 points / 2,43 m**,
+parcouru en autonomie en **≈ 20 s** (vitesse max 0,15 m/s).
+
+![suivi](images/etape5_suivi.gif)
+
+**Appris :** commande d'un robot différentiel (v, ω), quaternion → angle de cap, normalisation d'angle,
+boucle de commande à fréquence fixe (timer), compromis vitesse / précision.
+
+---
+
+## Étape 6 — Arrêt de sécurité · ✅
+
+**Objectif :** ne jamais heurter un obstacle **absent de la carte** (personne, carton, voiture mal garée).
+
+**Fait :**
+- `securite.py` : « garde du corps » entre le suiveur et les moteurs
+  (`suiveur → /cmd_vel_brut → securite → /cmd_vel → moteurs`), grâce à un **remapping** dans le launch
+  (le suiveur n'a pas été modifié)
+- règles : obstacle < 12 cm → marche avant bloquée ; 12–30 cm → ralentissement ;
+  capteur muet > 0,5 s → arrêt ; rotation et recul toujours permis
+
+**Test :** cube ajouté dans Gazebo au milieu de l'allée (inconnu de la carte).
+
+| Temps | Événement |
+|---|---|
+| +5 s | cube détecté à 30 cm → RALENTI |
+| +13 s | cube à 12 cm → **ARRÊT, sans contact** |
+| +67 s | cube retiré → OK, le robot repart |
+| +73 s | arrivé à destination |
+
+![securite](images/etape6_securite.gif)
+
+**Limite :** le robot attend que la voie se libère ; il ne contourne pas encore l'obstacle
+(→ bonus : re-planification).
+
+**Appris :** séparation des responsabilités entre nœuds, remapping de topics, QoS capteur (Best Effort),
+principe de « fail-safe » (arrêt si le capteur se tait).
