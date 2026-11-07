@@ -32,7 +32,8 @@ setup(
             'generer_carte = robot_parking.generer_carte:main',
             'generer_monde = robot_parking.generer_monde:main',
             'planificateur = robot_parking.planificateur:main',
-            'suiveur = robot_parking.suiveur:main',               # NOUVEAU (étape 5)
+            'suiveur = robot_parking.suiveur:main',
+            'securite = robot_parking.securite:main',             # NOUVEAU (étape 6)
         ],
     },
 )
