@@ -44,7 +44,8 @@ PLAQUES = {
 }
 
 # Distance entre le bord de la place et le point où le robot s'arrête (dans l'allée)
-RECUL_APPROCHE = 0.17
+# 0,25 m = milieu de l'allée : la caméra voit toute la voiture (champ ≈ 20 cm de large)
+RECUL_APPROCHE = 0.25
 
 LIBRE, OBSTACLE = 0, 1
 

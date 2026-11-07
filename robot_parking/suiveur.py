@@ -39,7 +39,8 @@ class Suiveur(Node):
         self.declare_parameter('rotation_max', 1.5)       # rad/s
         self.declare_parameter('gain_rotation', 2.0)      # réactivité en rotation
         self.declare_parameter('angle_pivot', 0.35)       # rad (20°) : au-delà, on pivote
-        self.declare_parameter('tolerance', 0.04)         # m : point "atteint"
+        self.declare_parameter('tolerance', 0.04)         # m : point intermédiaire "atteint"
+        self.declare_parameter('tolerance_finale', 0.015) # m : DERNIER point (précision pour la caméra)
 
         qos_plan = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL,
                               reliability=ReliabilityPolicy.RELIABLE)
@@ -103,6 +104,8 @@ class Suiveur(Node):
 
         cx, cy = self.points[self.indice]
         distance = math.hypot(cx - x, cy - y)
+        if self.indice == len(self.points) - 1:
+            tolerance = self.get_parameter('tolerance_finale').value
 
         # Point atteint ?
         if distance < tolerance:

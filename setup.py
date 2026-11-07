@@ -47,7 +47,8 @@ setup(
             'suiveur = robot_parking.suiveur:main',
             'securite = robot_parking.securite:main',
             'mission = robot_parking.mission:main',
-            'collecteur = robot_parking.collecteur:main',         # NOUVEAU (vision V1)
+            'collecteur = robot_parking.collecteur:main',         # vision V1
+            'tester_lecture = robot_parking.tester_lecture:main', # NOUVEAU (vision V2)
         ],
     },
 )

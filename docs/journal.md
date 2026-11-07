@@ -241,3 +241,21 @@ et la caméra voit sa plaque **176 تونس 5530**.
 au moment où le robot s'arrête face à la place.
 
 ![tournée plaques](images/vision_tournee_plaques.gif)
+
+---
+
+## Vision — V2 : lecture de plaque (OpenCV + Tesseract) · ✅
+
+- `lecture_plaque.py` (sans ROS) : 1) trouver la plaque (zone sombre ≈ 4:1 contenant des chiffres
+  blancs) 2) la redresser en 600 × 150 3) lire le numéro (zone gauche) et la série (zone droite)
+  avec Tesseract limité aux chiffres
+- `tester_lecture.py` : compare la lecture des 10 images avec `voitures.csv`
+
+| Essai | Score | Cause des erreurs |
+|---|---|---|
+| v1, arrêt à 17 cm (tolérance 4 cm) | 7/10 | rangée D : plaque **coupée par le bord de l'image** (robot décalé latéralement) |
+| v2, découpage « intelligent » | 5/10 | n'a pas traité la vraie cause, a ajouté des erreurs → abandonnée |
+| v1, arrêt à **25 cm**, précision finale **1,5 cm** | **10/10** | — (≈ 0,24 s par image) |
+
+**Leçon :** la vraie cause était la **prise de vue** (position d'arrêt), pas l'algorithme de lecture.
+**Limite :** testé sur 10 images de simulation (police nette, éclairage parfait) ; à revalider sur la maquette.
