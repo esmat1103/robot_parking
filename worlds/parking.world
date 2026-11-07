@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<!-- Fichier généré automatiquement par generer_monde.py : ne pas modifier à la main -->
+<sdf version="1.6">
+  <world name="parking">
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <!-- Caméra de la fenêtre Gazebo : vue d'ensemble de la maquette -->
+    <gui>
+      <camera name="vue">
+        <pose>0.90 -1.2 2.4 0 0.85 1.5708</pose>
+      </camera>
+    </gui>
+
+    <model name="mur_bas">
+      <static>true</static>
+      <pose>0.900 0.020 0.050 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>1.800 0.040 0.100</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>1.800 0.040 0.100</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.5 0.5 0.5 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="mur_haut">
+      <static>true</static>
+      <pose>0.900 2.440 0.050 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>1.800 0.040 0.100</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>1.800 0.040 0.100</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.5 0.5 0.5 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="mur_gauche">
+      <static>true</static>
+      <pose>0.020 1.230 0.050 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.040 2.460 0.100</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.040 2.460 0.100</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.5 0.5 0.5 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="mur_droit">
+      <static>true</static>
+      <pose>1.780 1.230 0.050 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.040 2.460 0.100</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.040 2.460 0.100</size></box></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.5 0.5 0.5 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A1">
+      <static>true</static>
+      <pose>0.540 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A2">
+      <static>true</static>
+      <pose>0.660 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A3">
+      <static>true</static>
+      <pose>0.780 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A4">
+      <static>true</static>
+      <pose>0.900 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A5">
+      <static>true</static>
+      <pose>1.020 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A6">
+      <static>true</static>
+      <pose>1.140 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_A6_d">
+      <static>true</static>
+      <pose>1.260 0.650 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B1">
+      <static>true</static>
+      <pose>0.540 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B2">
+      <static>true</static>
+      <pose>0.660 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B3">
+      <static>true</static>
+      <pose>0.780 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B4">
+      <static>true</static>
+      <pose>0.900 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B5">
+      <static>true</static>
+      <pose>1.020 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B6">
+      <static>true</static>
+      <pose>1.140 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_B6_d">
+      <static>true</static>
+      <pose>1.260 0.870 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C1">
+      <static>true</static>
+      <pose>0.540 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C2">
+      <static>true</static>
+      <pose>0.660 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C3">
+      <static>true</static>
+      <pose>0.780 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C4">
+      <static>true</static>
+      <pose>0.900 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C5">
+      <static>true</static>
+      <pose>1.020 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C6">
+      <static>true</static>
+      <pose>1.140 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_C6_d">
+      <static>true</static>
+      <pose>1.260 1.590 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D1">
+      <static>true</static>
+      <pose>0.540 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D2">
+      <static>true</static>
+      <pose>0.660 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D3">
+      <static>true</static>
+      <pose>0.780 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D4">
+      <static>true</static>
+      <pose>0.900 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D5">
+      <static>true</static>
+      <pose>1.020 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D6">
+      <static>true</static>
+      <pose>1.140 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="trait_D6_d">
+      <static>true</static>
+      <pose>1.260 1.810 0.0005 0 0 0</pose>
+      <link name="corps">
+        <visual name="visuel">
+          <geometry><box><size>0.005 0.220 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_A1">
+      <static>true</static>
+      <pose>0.600 0.650 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_A3">
+      <static>true</static>
+      <pose>0.840 0.650 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.1 0.3 0.8 1</ambient><diffuse>0.1 0.3 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_A4">
+      <static>true</static>
+      <pose>0.960 0.650 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.9 0.8 0.1 1</ambient><diffuse>0.9 0.8 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_B2">
+      <static>true</static>
+      <pose>0.720 0.870 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.1 0.6 0.2 1</ambient><diffuse>0.1 0.6 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_B6">
+      <static>true</static>
+      <pose>1.200 0.870 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_C1">
+      <static>true</static>
+      <pose>0.600 1.590 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_C5">
+      <static>true</static>
+      <pose>1.080 1.590 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.1 0.3 0.8 1</ambient><diffuse>0.1 0.3 0.8 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_D2">
+      <static>true</static>
+      <pose>0.720 1.810 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.9 0.8 0.1 1</ambient><diffuse>0.9 0.8 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_D3">
+      <static>true</static>
+      <pose>0.840 1.810 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.1 0.6 0.2 1</ambient><diffuse>0.1 0.6 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="voiture_D6">
+      <static>true</static>
+      <pose>1.200 1.810 0.030 0 0 0</pose>
+      <link name="corps">
+        <collision name="collision">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>

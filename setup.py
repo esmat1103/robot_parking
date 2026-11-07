@@ -16,7 +16,8 @@ setup(
         (os.path.join('share', package_name, 'params'), glob('params/*.yaml')),
         (os.path.join('share', package_name, 'maps'), glob('maps/*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
-        (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),   # NOUVEAU
+        (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
+        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),   # NOUVEAU (étape 3)
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -28,7 +29,8 @@ setup(
     # Les commandes "ros2 run robot_parking <nom>"
     entry_points={
         'console_scripts': [
-            'generer_carte = robot_parking.generer_carte:main',   # NOUVEAU
+            'generer_carte = robot_parking.generer_carte:main',
+            'generer_monde = robot_parking.generer_monde:main',   # NOUVEAU (étape 3)
         ],
     },
 )
