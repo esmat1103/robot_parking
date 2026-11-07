@@ -104,6 +104,36 @@ def case_libre_proche(bloque, case, distance_max=30):
     return None
 
 
+def ligne_libre(bloque, a, b):
+    """Vrai si le segment droit entre les cases a et b ne traverse aucune case bloquée.
+    On teste des points tous les 1/2 case le long du segment."""
+    n = int(max(abs(b[0] - a[0]), abs(b[1] - a[1])) * 2) + 1
+    for i in range(n + 1):
+        t = i / n
+        l = int(round(a[0] + t * (b[0] - a[0])))
+        c = int(round(a[1] + t * (b[1] - a[1])))
+        if bloque[l, c]:
+            return False
+    return True
+
+
+def simplifier(bloque, chemin):
+    """Lissage : on remplace les 'escaliers' par des lignes droites.
+    Depuis un point, on saute directement au point le plus lointain
+    qu'on peut atteindre en ligne droite sans toucher la zone interdite."""
+    if len(chemin) <= 2:
+        return list(chemin)
+    resultat = [chemin[0]]
+    i = 0
+    while i < len(chemin) - 1:
+        j = len(chemin) - 1
+        while j > i + 1 and not ligne_libre(bloque, chemin[i], chemin[j]):
+            j -= 1
+        resultat.append(chemin[j])
+        i = j
+    return resultat
+
+
 def longueur(chemin, taille_case):
     """Longueur du chemin en mètres."""
     total = 0.0

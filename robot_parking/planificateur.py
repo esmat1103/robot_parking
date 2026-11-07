@@ -6,7 +6,8 @@ planificateur.py : nœud ROS 2 qui calcule le chemin avec A*.
     /odom       (Odometry)      : la position actuelle du robot
     /goal_pose  (PoseStamped)   : la destination (outil "2D Goal Pose" de RViz)
 Publie :
-    /plan            (Path)          : le chemin à suivre (dessiné dans RViz)
+    /plan_brut       (Path)          : le chemin A* brut (case par case)
+    /plan            (Path)          : le chemin lissé, à suivre (dessiné dans RViz)
     /carte_securite  (OccupancyGrid) : les obstacles "gonflés" (zone interdite)
 
 Utilisation (déjà inclus dans simulation.launch.py) :
@@ -22,7 +23,7 @@ from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 from nav_msgs.msg import OccupancyGrid, Odometry, Path
 from geometry_msgs.msg import PoseStamped
 
-from robot_parking.astar import gonfler, astar, case_libre_proche, longueur
+from robot_parking.astar import gonfler, astar, case_libre_proche, longueur, simplifier
 
 
 class Planificateur(Node):
@@ -41,7 +42,8 @@ class Planificateur(Node):
         self.create_subscription(Odometry, '/odom', self.recevoir_odom, 10)
         self.create_subscription(PoseStamped, '/goal_pose', self.recevoir_but, 10)
 
-        self.pub_plan = self.create_publisher(Path, '/plan', qos_carte)
+        self.pub_plan = self.create_publisher(Path, '/plan', qos_carte)            # chemin lissé
+        self.pub_brut = self.create_publisher(Path, '/plan_brut', qos_carte)       # chemin A* brut
         self.pub_securite = self.create_publisher(OccupancyGrid, '/carte_securite', qos_carte)
 
         self.carte = None        # message /map reçu
@@ -120,13 +122,16 @@ class Planificateur(Node):
             self.get_logger().warn('Aucun chemin trouvé !')
             return
 
-        self.publier_chemin(chemin)
+        lisse = simplifier(self.bloque, chemin)
+        self.publier_chemin(self.pub_brut, chemin)
+        self.publier_chemin(self.pub_plan, lisse)
+        res = self.carte.info.resolution
         self.get_logger().info(
-            f'Chemin trouvé : {len(chemin)} cases, '
-            f'{longueur(chemin, self.carte.info.resolution):.2f} m, calculé en {duree_ms:.1f} ms')
+            f'Chemin trouvé : {len(chemin)} cases, {longueur(chemin, res):.2f} m, '
+            f'calculé en {duree_ms:.1f} ms -> lissé : {len(lisse)} points, {longueur(lisse, res):.2f} m')
 
     # ---------- Publication ----------
-    def publier_chemin(self, chemin):
+    def publier_chemin(self, publieur, chemin):
         plan = Path()
         plan.header.frame_id = 'map'
         plan.header.stamp = self.get_clock().now().to_msg()
@@ -136,7 +141,7 @@ class Planificateur(Node):
             pose.pose.position.x, pose.pose.position.y = self.vers_metres(case)
             pose.pose.orientation.w = 1.0
             plan.poses.append(pose)
-        self.pub_plan.publish(plan)
+        publieur.publish(plan)
 
 
 def main():

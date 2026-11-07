@@ -8,6 +8,7 @@ simulation.launch.py : démarre TOUTE la simulation en une commande.
     5. static_transform_publisher         (relie la carte "map" au repère "odom")
     6. RViz                               (affiche carte + robot + capteur)
     7. planificateur                      (A* : calcule le chemin vers le but cliqué)
+    8. suiveur                            (fait rouler le robot le long du chemin)
 
 Utilisation :
     ros2 launch robot_parking simulation.launch.py
@@ -86,6 +87,12 @@ def generate_launch_description():
         parameters=[{'rayon_securite': 0.15}, temps_simu], output='screen',
     )
 
+    # 8. Suiveur de chemin (étape 5) : /plan + /odom -> /cmd_vel
+    suiveur = Node(
+        package='robot_parking', executable='suiveur',
+        parameters=[{'vitesse_max': 0.15}, temps_simu], output='screen',
+    )
+
     return LaunchDescription([gazebo, etat_robot, poser_robot,
                               serveur_carte, allumage_carte, lien_map_odom, rviz,
-                              planificateur])
+                              planificateur, suiveur])
