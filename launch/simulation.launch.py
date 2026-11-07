@@ -10,6 +10,7 @@ simulation.launch.py : démarre TOUTE la simulation en une commande.
     7. planificateur                      (A* : calcule le chemin vers le but cliqué)
     8. suiveur                            (fait rouler le robot le long du chemin)
     9. securite                           (bloque la marche avant si obstacle trop proche)
+   10. mission                            (va à une place / cherche une plaque)
 
 Utilisation :
     ros2 launch robot_parking simulation.launch.py
@@ -103,6 +104,12 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 10. Mission (étape 7) : /mission (place ou plaque) -> /goal_pose, lecture de plaque
+    mission = Node(
+        package='robot_parking', executable='mission',
+        parameters=[temps_simu], output='screen',
+    )
+
     return LaunchDescription([gazebo, etat_robot, poser_robot,
                               serveur_carte, allumage_carte, lien_map_odom, rviz,
-                              planificateur, suiveur, securite])
+                              planificateur, suiveur, securite, mission])

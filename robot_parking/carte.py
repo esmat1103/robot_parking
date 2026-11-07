@@ -34,6 +34,18 @@ ENTREE = (EPAIS_MUR + LARG_ALLEE / 2, EPAIS_MUR + LARG_ALLEE / 2)
 # Places où une voiture est garée (choix fixe, le même dans Gazebo)
 PLACES_OCCUPEES = ["A1", "A3", "A4", "B2", "B6", "C1", "C5", "D2", "D3", "D6"]
 
+# Plaques des voitures garées (SIMULATION de la vision : plus tard, la caméra
+# + YOLO liront la vraie plaque ; ce tableau sera alors remplacé)
+PLAQUES = {
+    "A1": "112 TUN 3452", "A3": "205 TUN 1187", "A4": "098 TUN 7741",
+    "B2": "187 TUN 2290", "B6": "231 TUN 0456",
+    "C1": "150 TUN 9012", "C5": "176 TUN 5530",
+    "D2": "214 TUN 6678", "D3": "121 TUN 3009", "D6": "199 TUN 8125",
+}
+
+# Distance entre le bord de la place et le point où le robot s'arrête (dans l'allée)
+RECUL_APPROCHE = 0.17
+
 LIBRE, OBSTACLE = 0, 1
 
 
@@ -51,6 +63,15 @@ def calculer_places():
                 x = EPAIS_MUR + LARG_ALLEE + (p + 0.5) * LARG_PLACE
                 places[f"{lettre}{p + 1}"] = (x, y)
     return places
+
+
+def point_approche(nom):
+    """Point dans l'allée, juste devant l'entrée de la place 'nom'.
+    Rangées A et C : entrée par le bas. Rangées B et D : entrée par le haut."""
+    x, y = calculer_places()[nom]
+    if nom[0] in "AC":
+        return (x, y - PROF_PLACE / 2 - RECUL_APPROCHE)
+    return (x, y + PROF_PLACE / 2 + RECUL_APPROCHE)
 
 
 def remplir_rectangle(grille, xmin, ymin, xmax, ymax):

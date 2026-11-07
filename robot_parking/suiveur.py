@@ -21,6 +21,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 from nav_msgs.msg import Path, Odometry
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Bool
 
 
 def angle_normalise(a):
@@ -45,6 +46,7 @@ class Suiveur(Node):
         self.create_subscription(Path, '/plan', self.recevoir_plan, qos_plan)
         self.create_subscription(Odometry, '/odom', self.recevoir_odom, 10)
         self.pub_vitesse = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.pub_arrivee = self.create_publisher(Bool, '/arrivee', 10)   # étape 7
 
         self.points = []          # [(x, y), ...] à atteindre
         self.indice = 0           # numéro du point visé
@@ -86,6 +88,7 @@ class Suiveur(Node):
             self.indice += 1
             if self.indice >= len(self.points):
                 self.arreter()
+                self.pub_arrivee.publish(Bool(data=True))     # prévient le nœud mission
                 self.get_logger().info('Arrivé à destination !')
             return
 
