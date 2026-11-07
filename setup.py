@@ -30,7 +30,8 @@ setup(
     entry_points={
         'console_scripts': [
             'generer_carte = robot_parking.generer_carte:main',
-            'generer_monde = robot_parking.generer_monde:main',   # NOUVEAU (étape 3)
+            'generer_monde = robot_parking.generer_monde:main',
+            'planificateur = robot_parking.planificateur:main',   # NOUVEAU (étape 4)
         ],
     },
 )
