@@ -51,6 +51,8 @@ class Suiveur(Node):
         self.points = []          # [(x, y), ...] à atteindre
         self.indice = 0           # numéro du point visé
         self.pose = None          # (x, y, theta)
+        self.cap_final = None     # orientation voulue à l'arrivée (rad)
+        self.alignement = False   # True = dernier point atteint, on pivote vers cap_final
 
         self.create_timer(0.05, self.boucle)              # 20 Hz
         self.get_logger().info('Suiveur prêt : en attente d\'un chemin sur /plan.')
@@ -59,6 +61,11 @@ class Suiveur(Node):
     def recevoir_plan(self, msg):
         self.points = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
         self.indice = 1 if len(self.points) > 1 else 0    # le point 0 = position de départ
+        # orientation voulue à l'arrivée (celle du dernier point)
+        q = msg.poses[-1].pose.orientation if msg.poses else None
+        self.cap_final = None if q is None else math.atan2(
+            2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+        self.alignement = False
         self.get_logger().info(f'Nouveau chemin : {len(self.points)} points à suivre.')
 
     def recevoir_odom(self, msg):
@@ -80,16 +87,33 @@ class Suiveur(Node):
         tolerance = self.get_parameter('tolerance').value
 
         x, y, theta = self.pose
+
+        # Phase finale : pivoter sur place vers l'orientation demandée
+        if self.alignement:
+            ecart = angle_normalise(self.cap_final - theta)
+            if abs(ecart) < 0.05:                              # ~3° : c'est bon
+                self.terminer()
+            else:
+                commande = Twist()
+                commande.angular.z = max(-w_max, min(w_max, k_w * ecart))
+                if abs(commande.angular.z) < 0.3:             # éviter de tourner trop lentement
+                    commande.angular.z = math.copysign(0.3, ecart)
+                self.pub_vitesse.publish(commande)
+            return
+
         cx, cy = self.points[self.indice]
         distance = math.hypot(cx - x, cy - y)
 
         # Point atteint ?
         if distance < tolerance:
-            self.indice += 1
-            if self.indice >= len(self.points):
-                self.arreter()
-                self.pub_arrivee.publish(Bool(data=True))     # prévient le nœud mission
-                self.get_logger().info('Arrivé à destination !')
+            if self.indice == len(self.points) - 1:            # c'était le dernier
+                if self.cap_final is not None:
+                    self.alignement = True                     # -> on s'oriente
+                    self.arreter()
+                else:
+                    self.terminer()
+            else:
+                self.indice += 1
             return
 
         # Erreur d'angle entre "où je regarde" et "où est le point"
@@ -102,6 +126,13 @@ class Suiveur(Node):
             commande.linear.x = min(v_max, 1.5 * distance)    # 2) avancer (ralentit près du point)
         commande.angular.z = max(-w_max, min(w_max, k_w * erreur))
         self.pub_vitesse.publish(commande)
+
+    def terminer(self):
+        self.arreter()
+        self.indice = len(self.points)                         # plus rien à suivre
+        self.alignement = False
+        self.pub_arrivee.publish(Bool(data=True))              # prévient le nœud mission
+        self.get_logger().info('Arrivé à destination !')
 
     def arreter(self):
         self.pub_vitesse.publish(Twist())                      # v = 0, w = 0

@@ -193,3 +193,14 @@ Chaîne complète validée en simulation :
 
 Prochaines pistes : décor réaliste (miniatures + plaques) et caméra pour la vision ; bonus :
 re-planification autour d'un obstacle, DWA / piétons, PPO, SLAM, Nav2 ; passage au robot réel.
+
+---
+
+## Vision — partie A : caméra + orientation d'arrivée · ✅
+
+- caméra ajoutée au robot (640 × 480, 60°, 15 images/s, inclinée de 14° vers le bas) → `/camera/image_raw`
+- le robot finit **face à la place** : la mission envoie une orientation d'arrivée (+90° rangées A/C,
+  −90° rangées B/D), le planificateur la recopie sur le dernier point, le suiveur pivote jusqu'à ±3°
+- avec « 2D Goal Pose », la direction de la flèche est maintenant respectée
+
+![camera](images/vision_A_camera.png)

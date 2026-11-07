@@ -1,239 +1,134 @@
 Panels:
   - Class: rviz_common/Displays
-    Help Height: 70
     Name: Displays
-    Property Tree Widget:
-      Expanded: ~
-      Splitter Ratio: 0.5
-    Tree Height: 360
   - Class: rviz_common/Views
-    Expanded:
-      - /Current View1
     Name: Views
-    Splitter Ratio: 0.5
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.5
-      Cell Size: 0.10000000149011612
-      Class: rviz_default_plugins/Grid
-      Color: 160; 160; 164
-      Enabled: true
-      Line Style:
-        Line Width: 0.029999999329447746
-        Value: Lines
+    - Class: rviz_default_plugins/Grid
       Name: Grille 10 cm
-      Normal Cell Count: 0
-      Offset:
-        X: 0.8999999761581421
-        Y: 1.2000000476837158
-        Z: 0
-      Plane: XY
+      Enabled: true
+      Cell Size: 0.1
       Plane Cell Count: 30
-      Reference Frame: <Fixed Frame>
+      Offset:
+        X: 0.9
+        Y: 1.2
+        Z: 0
+      Color: 160; 160; 164
+      Alpha: 0.5
       Value: true
-    - Alpha: 0.800000011920929
-      Class: rviz_default_plugins/Map
-      Color Scheme: map
-      Draw Behind: false
-      Enabled: true
+    - Class: rviz_default_plugins/Map
       Name: Carte du parking
+      Enabled: true
       Topic:
-        Depth: 5
-        Durability Policy: Transient Local
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
         Value: /map
-      Update Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /map_updates
-      Use Timestamp: false
-      Value: true
-    - Alpha: 0.3499999940395355
-      Class: rviz_default_plugins/Map
-      Color Scheme: costmap
+      Color Scheme: map
+      Alpha: 0.8
       Draw Behind: false
-      Enabled: true
+      Value: true
+    - Class: rviz_default_plugins/Map
       Name: Zone de sécurité
+      Enabled: true
       Topic:
-        Depth: 1
-        Durability Policy: Transient Local
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
         Value: /carte_securite
-      Update Topic:
-        Depth: 5
-        Durability Policy: Volatile
+        Depth: 1
+        Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /carte_securite_updates
-      Use Timestamp: false
+      Color Scheme: costmap
+      Alpha: 0.35
+      Draw Behind: false
       Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz_default_plugins/Path
-      Color: 150; 150; 150
-      Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.009999999776482582
+    - Class: rviz_default_plugins/Path
       Name: Chemin A* brut (/plan_brut)
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic:
-        Depth: 1
-        Durability Policy: Transient Local
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /plan_brut
-      Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz_default_plugins/Path
-      Color: 255; 140; 0
       Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Billboards
-      Line Width: 0.014999999664723873
-      Name: Chemin lissé (/plan)
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
       Topic:
+        Value: /plan_brut
         Depth: 1
         Durability Policy: Transient Local
-        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /plan
+      Color: 150; 150; 150
+      Alpha: 1
+      Line Style: Lines
+      Line Width: 0.01
+      Buffer Length: 1
+      Pose Style: None
       Value: true
-    - Alpha: 1
-      Class: rviz_default_plugins/RobotModel
-      Collision Enabled: false
-      Description File: ""
+    - Class: rviz_default_plugins/Path
+      Name: Chemin lissé (/plan)
+      Enabled: true
+      Topic:
+        Value: /plan
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+      Color: 255; 140; 0
+      Alpha: 1
+      Line Style: Billboards
+      Line Width: 0.015
+      Buffer Length: 1
+      Pose Style: None
+      Value: true
+    - Class: rviz_default_plugins/RobotModel
+      Name: Robot
+      Enabled: true
       Description Source: Topic
       Description Topic:
+        Value: /robot_description
         Depth: 5
         Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
-      Enabled: true
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: false
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        laser:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        roue_droite:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        roue_gauche:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-      Mass Properties:
-        Inertia: false
-        Mass: false
-      Name: Robot
-      TF Prefix: ""
-      Update Interval: 0
-      Value: true
+      Alpha: 1
       Visual Enabled: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz_default_plugins/LaserScan
-      Color: 255; 0; 0
-      Color Transformer: FlatColor
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
+      Collision Enabled: false
+      Value: true
+    - Class: rviz_default_plugins/LaserScan
       Name: Capteur (/scan)
-      Position Transformer: XYZ
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.019999999552965164
-      Style: Spheres
+      Enabled: true
       Topic:
+        Value: /scan
         Depth: 5
         Durability Policy: Volatile
-        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /scan
-      Use Fixed Frame: true
-      Use rainbow: true
+      Style: Spheres
+      Size (m): 0.02
+      Color Transformer: FlatColor
+      Color: 255; 0; 0
+      Alpha: 1
+      Decay Time: 0
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Name: Caméra
+      Enabled: true
+      Topic:
+        Value: /camera/image_raw
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+      Normalize Range: true
       Value: true
     - Class: rviz_default_plugins/TF
-      Enabled: false
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-      Marker Scale: 0.30000001192092896
       Name: Repères TF
-      Show Arrows: true
-      Show Axes: true
+      Enabled: false
       Show Names: true
-      Tree:
-        {}
-      Update Interval: 0
+      Show Axes: true
+      Marker Scale: 0.3
       Value: false
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
     Fixed Frame: map
+    Background Color: 48; 48; 48
     Frame Rate: 30
-  Name: root
   Tools:
     - Class: rviz_default_plugins/MoveCamera
     - Class: rviz_default_plugins/Select
@@ -241,50 +136,26 @@ Visualization Manager:
       Line color: 128; 128; 0
     - Class: rviz_default_plugins/SetGoal
       Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
         Value: /goal_pose
     - Class: rviz_default_plugins/PublishPoint
       Single click: true
       Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
         Value: /clicked_point
-  Transformation:
-    Current:
-      Class: rviz_default_plugins/TF
   Value: true
   Views:
     Current:
-      Angle: -0.004999999888241291
       Class: rviz_default_plugins/TopDownOrtho
+      Name: Current View
+      Scale: 250
+      X: 0.9
+      Y: 1.23
+      Angle: 0
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.05999999865889549
-        Stereo Focal Distance: 1
-        Swap Stereo Eyes: false
         Value: false
       Invert Z Axis: false
-      Name: Current View
-      Near Clip Distance: 0.009999999776482582
-      Scale: 250
-      Target Frame: <Fixed Frame>
+      Near Clip Distance: 0.01
       Value: TopDownOrtho (rviz_default_plugins)
-      X: 0.8999999761581421
-      Y: 1.2300000190734863
     Saved: ~
 Window Geometry:
-  Displays:
-    collapsed: false
-  Height: 897
-  Hide Left Dock: false
-  Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001cb00000327fc0200000002fb000000100044006900730070006c006100790073010000003d000001eb000000c900fffffffb0000000a00560069006500770073010000022e00000136000000a400ffffff000002190000032700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-  Views:
-    collapsed: false
-  Width: 1002
-  X: -218
-  Y: 53
+  Height: 850
+  Width: 1100

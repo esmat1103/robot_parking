@@ -123,15 +123,17 @@ class Planificateur(Node):
             return
 
         lisse = simplifier(self.bloque, chemin)
-        self.publier_chemin(self.pub_brut, chemin)
-        self.publier_chemin(self.pub_plan, lisse)
+        # l'orientation demandée (flèche de RViz, ou "face à la place" pour la mission)
+        # est recopiée sur le DERNIER point : le suiveur s'alignera dessus à l'arrivée
+        self.publier_chemin(self.pub_brut, chemin, msg.pose.orientation)
+        self.publier_chemin(self.pub_plan, lisse, msg.pose.orientation)
         res = self.carte.info.resolution
         self.get_logger().info(
             f'Chemin trouvé : {len(chemin)} cases, {longueur(chemin, res):.2f} m, '
             f'calculé en {duree_ms:.1f} ms -> lissé : {len(lisse)} points, {longueur(lisse, res):.2f} m')
 
     # ---------- Publication ----------
-    def publier_chemin(self, publieur, chemin):
+    def publier_chemin(self, publieur, chemin, orientation_finale):
         plan = Path()
         plan.header.frame_id = 'map'
         plan.header.stamp = self.get_clock().now().to_msg()
@@ -141,6 +143,7 @@ class Planificateur(Node):
             pose.pose.position.x, pose.pose.position.y = self.vers_metres(case)
             pose.pose.orientation.w = 1.0
             plan.poses.append(pose)
+        plan.poses[-1].pose.orientation = orientation_finale
         publieur.publish(plan)
 
 

@@ -101,7 +101,11 @@ class Mission(Node):
         but.header.frame_id = 'map'
         but.header.stamp = self.get_clock().now().to_msg()
         but.pose.position.x, but.pose.position.y = x, y
-        but.pose.orientation.w = 1.0
+        # à l'arrivée, le robot se tourne FACE à la place (pour que la caméra voie la plaque)
+        # rangées A et C : place au-dessus du robot (+90°) ; B et D : en dessous (-90°)
+        cap = math.pi / 2 if self.place_actuelle[0] in "AC" else -math.pi / 2
+        but.pose.orientation.z = math.sin(cap / 2)
+        but.pose.orientation.w = math.cos(cap / 2)
         self.pub_but.publish(but)
 
         self.etat = 'EN_ROUTE'
