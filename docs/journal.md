@@ -146,3 +146,50 @@ boucle de commande à fréquence fixe (timer), compromis vitesse / précision.
 
 **Appris :** séparation des responsabilités entre nœuds, remapping de topics, QoS capteur (Best Effort),
 principe de « fail-safe » (arrêt si le capteur se tait).
+
+---
+
+## Étape 7 — Mission complète (lecture de plaque simulée) · ✅
+
+**Objectif :** l'objectif réel du projet — retrouver une voiture et s'arrêter devant elle.
+
+**Fait :**
+- `mission.py` : « chef d'orchestre » qui réutilise toute la chaîne existante
+  (`/mission → mission → /goal_pose → planificateur → suiveur → sécurité → moteurs`, retour par `/arrivee`)
+- deux modes : **nom de place** (`C5`) ou **plaque** (`199 TUN 8125`)
+- en mode plaque : visite des voitures **la plus proche d'abord**, arrêt au **point d'approche**
+  (dans l'allée, devant l'entrée de la place), « lecture » 1,5 s, comparaison, place suivante
+- lecture de plaque **simulée** (`lire_plaque()` + tableau `PLAQUES`) : c'est **le seul point
+  à remplacer** par la vision (caméra + YOLO)
+
+**Résultat — recherche de `199 TUN 8125` :**
+
+| # | Place | Plaque lue | Trajet |
+|---|---|---|---|
+| 1 | A1 | 112 TUN 3452 ✗ | 0,33 m |
+| 2 | A3 | 205 TUN 1187 ✗ | 0,28 m |
+| 3 | A4 | 098 TUN 7741 ✗ | 0,16 m |
+| 4 | B2 | 187 TUN 2290 ✗ | 1,38 m |
+| 5 | C1 | 150 TUN 9012 ✗ | 0,18 m |
+| 6 | C5 | 176 TUN 5530 ✗ | 0,46 m |
+| 7 | B6 | 231 TUN 0456 ✗ | 0,23 m |
+| 8 | **D6** | **199 TUN 8125 ✓** | 1,07 m |
+
+**8 voitures vérifiées, ≈ 4,1 m, ≈ 50 s, sans collision.** Chaque trajet A* calculé en < 10 ms.
+
+![mission](images/etape7_mission.gif)
+
+**Limite :** « la plus proche d'abord » est une heuristique, pas la tournée optimale.
+
+**Appris :** machine à états (ATTENTE → EN_ROUTE → LECTURE → FINI), coordination de nœuds par topics,
+conception « par interfaces » (la vision se branche sans toucher à la navigation).
+
+---
+
+## Bilan de la partie navigation (indispensable) · ✅
+
+Chaîne complète validée en simulation :
+**carte → A* + zone de sécurité → lissage → suivi autonome → arrêt de sécurité → mission place / plaque.**
+
+Prochaines pistes : décor réaliste (miniatures + plaques) et caméra pour la vision ; bonus :
+re-planification autour d'un obstacle, DWA / piétons, PPO, SLAM, Nav2 ; passage au robot réel.
