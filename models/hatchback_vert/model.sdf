@@ -1,0 +1,1 @@
+<?xml version="1.0"?><sdf version="1.6"><model name="hatchback_vert"><static>true</static><link name="l"><visual name="v"><geometry><mesh><uri>model://hatchback_vert/meshes/hatchback.obj</uri><scale>0.0254 0.0254 0.0254</scale></mesh></geometry></visual></link></model></sdf>

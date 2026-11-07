@@ -5,7 +5,6 @@
     <include><uri>model://sun</uri></include>
     <include><uri>model://ground_plane</uri></include>
 
-    <!-- Caméra de la fenêtre Gazebo : vue d'ensemble de la maquette -->
     <gui>
       <camera name="vue">
         <pose>0.90 -1.2 2.4 0 0.85 1.5708</pose>
@@ -346,131 +345,271 @@
     </model>
     <model name="voiture_A1">
       <static>true</static>
-      <pose>0.600 0.650 0.030 0 0 0</pose>
+      <pose>0.600 0.650 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_red/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/A1</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/A1</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_A3">
       <static>true</static>
-      <pose>0.840 0.650 0.030 0 0 0</pose>
+      <pose>0.840 0.650 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.1 0.3 0.8 1</ambient><diffuse>0.1 0.3 0.8 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_blue/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/A3</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/A3</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_A4">
       <static>true</static>
-      <pose>0.960 0.650 0.030 0 0 0</pose>
+      <pose>0.960 0.650 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.9 0.8 0.1 1</ambient><diffuse>0.9 0.8 0.1 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_jaune/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/A4</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/A4</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_B2">
       <static>true</static>
-      <pose>0.720 0.870 0.030 0 0 0</pose>
+      <pose>0.720 0.870 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.033 0 0 0</pose>
+          <geometry><box><size>0.080 0.154 0.066</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.1 0.6 0.2 1</ambient><diffuse>0.1 0.6 0.2 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>0.0010 -0.0020 0.0003 0 0 0</pose>
+          <geometry><mesh><uri>model://suv/meshes/suv.obj</uri>
+            <scale>0.001844 0.001844 0.001844</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0786 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/B2</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0786 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/B2</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_B6">
       <static>true</static>
-      <pose>1.200 0.870 0.030 0 0 0</pose>
+      <pose>1.200 0.870 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_vert/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/B6</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/B6</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_C1">
       <static>true</static>
-      <pose>0.600 1.590 0.030 0 0 0</pose>
+      <pose>0.600 1.590 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.031 0 0 0</pose>
+          <geometry><box><size>0.080 0.184 0.061</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.8 0.1 0.1 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 -0.0016 0.0003 0 0 0</pose>
+          <geometry><mesh><uri>model://prius_hybrid/meshes/Hybrid.obj</uri>
+            <scale>0.000398 0.000398 0.000398</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0933 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/C1</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0933 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/C1</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_C5">
       <static>true</static>
-      <pose>1.080 1.590 0.030 0 0 0</pose>
+      <pose>1.080 1.590 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.1 0.3 0.8 1</ambient><diffuse>0.1 0.3 0.8 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/C5</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/C5</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_D2">
       <static>true</static>
-      <pose>0.720 1.810 0.030 0 0 0</pose>
+      <pose>0.720 1.810 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.9 0.8 0.1 1</ambient><diffuse>0.9 0.8 0.1 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_red/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/D2</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/D2</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_D3">
       <static>true</static>
-      <pose>0.840 1.810 0.030 0 0 0</pose>
+      <pose>0.840 1.810 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.1 0.6 0.2 1</ambient><diffuse>0.1 0.6 0.2 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_blue/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/D3</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/D3</name></script></material>
         </visual>
       </link>
     </model>
     <model name="voiture_D6">
       <static>true</static>
-      <pose>1.200 1.810 0.030 0 0 0</pose>
+      <pose>1.200 1.810 0 0 0 0</pose>
       <link name="corps">
         <collision name="collision">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
+          <pose>0 0 0.029 0 0 0</pose>
+          <geometry><box><size>0.080 0.150 0.059</size></box></geometry>
         </collision>
-        <visual name="visuel">
-          <geometry><box><size>0.080 0.190 0.060</size></box></geometry>
-          <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material>
+        <visual name="carrosserie">
+          <pose>-0.0000 0.0128 0.0004 0 0 0</pose>
+          <geometry><mesh><uri>model://hatchback_jaune/meshes/hatchback.obj</uri>
+            <scale>0.000949 0.000949 0.000949</scale></mesh></geometry>
+        </visual>
+        <visual name="plaque_haut">
+          <pose>0 0.0763 0.022 0 0 0</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/D6</name></script></material>
+        </visual>
+        <visual name="plaque_bas">
+          <pose>0 -0.0763 0.022 0 0 3.1416</pose>
+          <geometry><box><size>0.06 0.002 0.015</size></box></geometry>
+          <material><script><uri>model://plaques/materials/scripts</uri>
+            <uri>model://plaques/materials/textures</uri><name>Plaque/D6</name></script></material>
         </visual>
       </link>
     </model>

@@ -5,6 +5,18 @@ from setuptools import find_packages, setup
 
 package_name = 'robot_parking'
 
+
+def dossier_complet(dossier):
+    """Installe un dossier AVEC ses sous-dossiers (glob seul ne descend pas dedans).
+    Utile pour models/ : chaque voiture a ses sous-dossiers meshes/ et materials/."""
+    liste = []
+    for racine, _, fichiers in os.walk(dossier):
+        if fichiers:
+            liste.append((os.path.join('share', package_name, racine),
+                          [os.path.join(racine, f) for f in fichiers]))
+    return liste
+
+
 setup(
     name=package_name,
     version='0.1.0',
@@ -17,8 +29,8 @@ setup(
         (os.path.join('share', package_name, 'maps'), glob('maps/*')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
-        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),   # NOUVEAU (étape 3)
-    ],
+        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
+    ] + dossier_complet('models'),                     # NOUVEAU (vision B) : voitures 3D + plaques
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='esmat',

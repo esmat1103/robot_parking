@@ -204,3 +204,21 @@ re-planification autour d'un obstacle, DWA / piétons, PPO, SLAM, Nav2 ; passage
 - avec « 2D Goal Pose », la direction de la flèche est maintenant respectée
 
 ![camera](images/vision_A_camera.png)
+
+---
+
+## Vision — partie B : voitures réalistes + plaques tunisiennes · ✅
+
+- les boîtes colorées sont remplacées par **7 modèles 3D** (citadines 5 couleurs, SUV, berline,
+  modèles OSRF, licence CC BY 3.0) réduits à 19 × 8 cm
+- chaque voiture porte **sa plaque tunisienne** (chiffres + « تونس ») à l'avant et à l'arrière ;
+  ce sont **les mêmes plaques que le tableau `PLAQUES`** → simulation et future vision cohérentes
+- `worlds/voitures.csv` : la « vérité » (place, couleur, type, plaque) pour tester la vision
+- problème rencontré : plaques grises (sans chiffres). Cause : avec `--symlink-install`, `install/`
+  ne contient que des raccourcis et le moteur graphique OGRE ne charge pas les images.
+  Solution : Gazebo lit les modèles directement dans `src/models`.
+
+**Démo :** mission « C5 » → le robot rejoint la citadine grise, se tourne face à elle,
+et la caméra voit sa plaque **176 تونس 5530**.
+
+![vision B](images/vision_B_c5.gif)

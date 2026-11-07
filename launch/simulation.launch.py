@@ -19,7 +19,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, AppendEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -35,6 +35,10 @@ def generate_launch_description():
         description_robot = f.read()
 
     temps_simu = {'use_sim_time': True}   # tous les nœuds suivent l'horloge de Gazebo
+
+    # 0. Dire à Gazebo où trouver nos modèles (voitures 3D, plaques) : model://hatchback, ...
+    chemin_modeles = AppendEnvironmentVariable(
+        'GAZEBO_MODEL_PATH', os.path.join(dossier, 'models'))
 
     # 1. Gazebo
     gazebo = IncludeLaunchDescription(
@@ -110,6 +114,6 @@ def generate_launch_description():
         parameters=[temps_simu], output='screen',
     )
 
-    return LaunchDescription([gazebo, etat_robot, poser_robot,
+    return LaunchDescription([chemin_modeles, gazebo, etat_robot, poser_robot,
                               serveur_carte, allumage_carte, lien_map_odom, rviz,
                               planificateur, suiveur, securite, mission])

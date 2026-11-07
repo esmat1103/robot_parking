@@ -1,0 +1,89 @@
+material Plaque/A1
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_A1.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/A3
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_A3.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/A4
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_A4.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/B2
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_B2.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/B6
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_B6.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/C1
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_C1.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/C5
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_C5.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/D2
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_D2.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/D3
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_D3.png
+                   filtering trilinear }
+  } }
+}
+
+material Plaque/D6
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture plaque_D6.png
+                   filtering trilinear }
+  } }
+}

@@ -1,0 +1,4 @@
+Modèles de voitures : dépôt osrf/gazebo_models (hatchback, hatchback_blue, hatchback_red, suv,
+prius_hybrid), auteur Open Source Robotics Foundation, licence Creative Commons BY 3.0
+(voir LICENCE_modeles_voitures_CC-BY-3.0.txt).
+hatchback_jaune et hatchback_vert : texture de hatchback_red recolorée pour le projet.
