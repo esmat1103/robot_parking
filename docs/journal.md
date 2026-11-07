@@ -236,3 +236,8 @@ et la caméra voit sa plaque **176 تونس 5530**.
   de la caméra dans `~/parking_ws/dataset/sim/X.png` (0,5 s après, image stable)
 - mission avec une plaque inexistante → le robot visite les 10 voitures → **10 images en ≈ 75 s**
 - les images restent hors du dépôt (`~/parking_ws/dataset/`)
+
+**Démo :** tournée du robot devant les voitures, le panneau Caméra de RViz montre chaque plaque
+au moment où le robot s'arrête face à la place.
+
+![tournée plaques](images/vision_tournee_plaques.gif)
