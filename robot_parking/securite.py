@@ -83,9 +83,13 @@ def main():
         rclpy.spin(noeud)
     except KeyboardInterrupt:
         pass
-    noeud.pub_vitesse.publish(Twist())
-    noeud.destroy_node()
-    rclpy.shutdown()
+    finally:
+        # Avec Ctrl+C, ROS 2 s'éteint parfois tout seul AVANT nous :
+        # on ne fait le ménage que s'il est encore allumé (évite les erreurs rouges)
+        if rclpy.ok():
+            noeud.pub_vitesse.publish(Twist())   # dernier ordre : vitesse nulle
+            noeud.destroy_node()
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':

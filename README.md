@@ -52,3 +52,7 @@ robot_parking/
 ├── rviz/            configurations RViz
 └── docs/            journal de bord et images
 ```
+
+> ⚠️ **Gazebo (plaques des voitures)** : ajouter une fois dans `~/.bashrc` :
+> `export GAZEBO_MODEL_PATH=$HOME/parking_ws/src/robot_parking/models:/usr/share/gazebo-11/models`
+> (sinon les plaques s'affichent blanches, à cause des raccourcis créés par `--symlink-install`)

@@ -222,3 +222,8 @@ re-planification autour d'un obstacle, DWA / piétons, PPO, SLAM, Nav2 ; passage
 et la caméra voit sa plaque **176 تونس 5530**.
 
 ![vision B](images/vision_B_c5.gif)
+
+**Vue de la caméra du robot devant C5 :** plaque « 5530 تونس 176 » nette et dans le bon sens
+(pas de miroir) → images exploitables pour entraîner YOLO / la lecture des chiffres.
+
+![camera plaque](images/vision_B_camera_plaque.png)
