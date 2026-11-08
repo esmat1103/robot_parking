@@ -363,3 +363,27 @@ au moment où le robot s'arrête face à la place.
   de la position d'arrêt exacte (observée une fois après un détour)
 - chaque lecture fausse est **enregistrée** dans `~/parking_ws/dataset/erreurs/` (image caméra + contrôle)
   pour pouvoir la diagnostiquer
+
+---
+
+## Dynamique — D3 : conducteur DWA (anticipation du piéton) · ✅
+
+- `suiveur_dwa.py` (d'après l'ancien `dwa.py`), même interface que le suiveur ; choix au lancement :
+  `ros2 launch robot_parking simulation.launch.py controleur:=dwa`
+- 10 fois par seconde : fenêtre des vitesses atteignables → 66 trajectoires imaginées sur 1,5 s →
+  rejet de celles qui touchent un obstacle ou la **position future** du piéton (marge qui grossit
+  avec le temps) → note : cible + dégagement + vitesse
+- ajouts : **mode précis** « tourner puis avancer » à moins de 10 cm du but (lecture de plaque),
+  **déblocage** (pivot) si aucun progrès en 3 s ; avec DWA, l'arrêt « piéton » de la sécurité passe à 22 cm
+
+**Mission C5 (un essai par scénario) :**
+
+| Conducteur | Sans piéton | Piéton qui traverse | Comportement |
+|---|---|---|---|
+| Suiveur + D2 (tout contourner) | ≈ 13 s | ≈ 33 s | détour de 2,54 m |
+| Suiveur + D2b (priorité piéton) | ≈ 13 s | ≈ 15 s | s'arrête, puis repart |
+| **DWA** | **13,1 s** | **14,3 s** | **ralentit sans s'arrêter, passe derrière** |
+
+→ à confirmer avec plusieurs essais (évaluation automatique, D5).
+
+![DWA](images/D3_dwa_pieton.gif)

@@ -19,7 +19,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, AppendEnvironmentVariable
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.conditions import LaunchConfigurationEquals
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -37,8 +38,15 @@ def generate_launch_description():
     temps_simu = {'use_sim_time': True}   # tous les nœuds suivent l'horloge de Gazebo
 
     # 0. Dire à Gazebo où trouver nos modèles (voitures 3D, plaques) : model://hatchback, ...
-    chemin_modeles = AppendEnvironmentVariable(
-        'GAZEBO_MODEL_PATH', os.path.join(dossier, 'models'))
+    #    On prend le dossier src/ (vrais fichiers) : avec --symlink-install, install/ ne contient
+    #    que des raccourcis, et le moteur graphique (OGRE) n'affiche pas les images des plaques.
+    #    On modifie la variable TOUT DE SUITE (comme un "export" dans le terminal),
+    #    car le launch de Gazebo la lit dès le départ.
+    modeles_src = os.path.expanduser('~/parking_ws/src/robot_parking/models')
+    modeles = modeles_src if os.path.isdir(modeles_src) else os.path.join(dossier, 'models')
+    ancien = os.environ.get('GAZEBO_MODEL_PATH', '')
+    os.environ['GAZEBO_MODEL_PATH'] = ':'.join(
+        p for p in [modeles, '/usr/share/gazebo-11/models', ancien] if p)
 
     # 1. Gazebo
     gazebo = IncludeLaunchDescription(
@@ -93,18 +101,40 @@ def generate_launch_description():
         parameters=[{'rayon_securite': 0.15}, temps_simu], output='screen',
     )
 
-    # 8. Suiveur de chemin (étape 5) : /plan + /odom -> /cmd_vel_brut
-    #    (remapping : il croit publier sur /cmd_vel, mais ça part sur /cmd_vel_brut)
+    # Choix du CONDUCTEUR au lancement (D3) :
+    #   ros2 launch robot_parking simulation.launch.py                    -> suiveur (par défaut)
+    #   ros2 launch robot_parking simulation.launch.py controleur:=dwa    -> DWA
+    choix = DeclareLaunchArgument('controleur', default_value='suiveur',
+                                  description='suiveur ou dwa')
+    si_suiveur = LaunchConfigurationEquals('controleur', 'suiveur')
+    si_dwa = LaunchConfigurationEquals('controleur', 'dwa')
+
+    # 8a. Suiveur « tourner puis avancer » (étape 5) : /plan + /odom -> /cmd_vel_brut
+    #     (remapping : il croit publier sur /cmd_vel, mais ça part sur /cmd_vel_brut)
     suiveur = Node(
-        package='robot_parking', executable='suiveur',
+        package='robot_parking', executable='suiveur', condition=si_suiveur,
         parameters=[{'vitesse_max': 0.15}, temps_simu], output='screen',
+        remappings=[('/cmd_vel', '/cmd_vel_brut')],
+    )
+    # 8b. Conducteur DWA (D3) : /plan_brut + /odom + /pieton -> /cmd_vel_brut
+    suiveur_dwa = Node(
+        package='robot_parking', executable='suiveur_dwa', condition=si_dwa,
+        parameters=[temps_simu], output='screen',
         remappings=[('/cmd_vel', '/cmd_vel_brut')],
     )
 
     # 9. Sécurité (étape 6) : /cmd_vel_brut + /scan -> /cmd_vel (vers les moteurs)
+    #    Avec DWA, l'arrêt « piéton » est plus court (22 cm) : DWA évite lui-même le piéton
+    #    et doit pouvoir passer derrière lui ; la sécurité reste le dernier filet.
     securite = Node(
-        package='robot_parking', executable='securite',
+        package='robot_parking', executable='securite', condition=si_suiveur,
         parameters=[{'distance_arret': 0.12, 'distance_ralenti': 0.30}, temps_simu],
+        output='screen',
+    )
+    securite_dwa = Node(
+        package='robot_parking', executable='securite', condition=si_dwa,
+        parameters=[{'distance_arret': 0.12, 'distance_ralenti': 0.30,
+                     'distance_pieton': 0.22}, temps_simu],
         output='screen',
     )
 
@@ -114,6 +144,7 @@ def generate_launch_description():
         parameters=[temps_simu], output='screen',
     )
 
-    return LaunchDescription([chemin_modeles, gazebo, etat_robot, poser_robot,
+    return LaunchDescription([choix, gazebo, etat_robot, poser_robot,
                               serveur_carte, allumage_carte, lien_map_odom, rviz,
-                              planificateur, suiveur, securite, mission])
+                              planificateur, suiveur, suiveur_dwa, securite, securite_dwa,
+                              mission])

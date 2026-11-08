@@ -50,7 +50,8 @@ setup(
             'collecteur = robot_parking.collecteur:main',         # vision V1
             'tester_lecture = robot_parking.tester_lecture:main', # vision V2
             'tester_yolo = robot_parking.tester_yolo:main',       # vision V4
-            'pieton = robot_parking.pieton:main',                 # NOUVEAU (D1 : piéton)
+            'pieton = robot_parking.pieton:main',                 # D1 : piéton
+            'suiveur_dwa = robot_parking.suiveur_dwa:main',       # NOUVEAU (D3 : DWA)
         ],
     },
 )
