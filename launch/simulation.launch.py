@@ -23,6 +23,8 @@ from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.conditions import LaunchConfigurationEquals
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
+from launch.substitutions import LaunchConfiguration
 
 from robot_parking.carte import ENTREE
 
@@ -110,18 +112,22 @@ def generate_launch_description():
     si_suiveur = LaunchConfigurationEquals('controleur', 'suiveur')
     si_dwa = LaunchConfigurationEquals('controleur', 'dwa')
     si_ppo = LaunchConfigurationEquals('controleur', 'ppo')
+    # Vitesse max du suiveur et de DWA (PPO : 0,20 m/s fixée par son entraînement)
+    #   ... vitesse:=0.20   -> comparaison équitable avec PPO (D5)
+    choix_vitesse = DeclareLaunchArgument('vitesse', default_value='0.15')
+    vitesse = ParameterValue(LaunchConfiguration('vitesse'), value_type=float)
 
     # 8a. Suiveur « tourner puis avancer » (étape 5) : /plan + /odom -> /cmd_vel_brut
     #     (remapping : il croit publier sur /cmd_vel, mais ça part sur /cmd_vel_brut)
     suiveur = Node(
         package='robot_parking', executable='suiveur', condition=si_suiveur,
-        parameters=[{'vitesse_max': 0.15}, temps_simu], output='screen',
+        parameters=[{'vitesse_max': vitesse}, temps_simu], output='screen',
         remappings=[('/cmd_vel', '/cmd_vel_brut')],
     )
     # 8b. Conducteur DWA (D3) : /plan_brut + /odom + /pieton -> /cmd_vel_brut
     suiveur_dwa = Node(
         package='robot_parking', executable='suiveur_dwa', condition=si_dwa,
-        parameters=[temps_simu], output='screen',
+        parameters=[{'vitesse_max': vitesse}, temps_simu], output='screen',
         remappings=[('/cmd_vel', '/cmd_vel_brut')],
     )
 
@@ -159,7 +165,7 @@ def generate_launch_description():
         parameters=[temps_simu], output='screen',
     )
 
-    return LaunchDescription([choix, gazebo, etat_robot, poser_robot,
+    return LaunchDescription([choix, choix_vitesse, gazebo, etat_robot, poser_robot,
                               serveur_carte, allumage_carte, lien_map_odom, rviz,
                               planificateur, suiveur, suiveur_dwa, suiveur_ppo,
                               securite, securite_dwa, securite_ppo, mission])

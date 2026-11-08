@@ -1,0 +1,13 @@
+controleur,place,pieton,reussi,arrive,temps_s,distance_m,collision_fixe,collision_pieton,piéton_vu,dist_min_pieton_m
+suiveur,A4,0,1,1,6.4,0.669,0,0,0,
+suiveur,B2,0,1,1,10.1,1.068,0,0,0,
+suiveur,B6,0,1,1,12.6,1.526,0,0,0,
+suiveur,C1,0,1,1,9.1,1.005,0,0,0,
+suiveur,C5,0,1,1,12.2,1.407,0,0,0,
+suiveur,D6,0,1,1,17.3,2.434,0,0,0,
+suiveur,A4,1,0,1,9.8,0.671,0,1,1,0.039
+suiveur,B2,1,1,1,12.6,1.068,0,0,1,0.206
+suiveur,B6,1,1,1,15.9,1.523,0,0,1,0.213
+suiveur,C1,1,1,1,12.5,1.004,0,0,1,0.215
+suiveur,C5,1,1,1,15.5,1.403,0,0,1,0.21
+suiveur,D6,1,1,1,19.9,2.43,0,0,1,0.101

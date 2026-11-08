@@ -24,7 +24,7 @@ dans un parking (maquette à l'échelle) grâce à la vision, puis s'y rend de f
 | 5 | Suivi de chemin jusqu'à une place | ✅ |
 | 6 | Arrêt de sécurité (capteur de distance) | ✅ |
 | 7 | Mission complète (place ou plaque, lecture simulée) | ✅ |
-| ★ | Bonus : DWA / piétons, PPO, SLAM, Nav2 | ⏳ |
+| ★ | Piéton, re-planification, DWA, PPO + comparaison | ✅ |
 
 Le détail de chaque étape (ce qui a été fait, pourquoi, captures) est dans
 [docs/journal.md](docs/journal.md).

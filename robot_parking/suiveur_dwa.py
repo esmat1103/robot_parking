@@ -73,6 +73,8 @@ class SuiveurDWA(Node):
 
     def __init__(self):
         super().__init__('suiveur_dwa')
+        self.declare_parameter('vitesse_max', V_MAX)      # réglable (comparaison équitable, D5)
+        self.v_max = self.get_parameter('vitesse_max').value
         qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL,
                          reliability=ReliabilityPolicy.RELIABLE)
         self.create_subscription(Path, '/plan_brut', self.recevoir_plan, qos)
@@ -151,7 +153,7 @@ class SuiveurDWA(Node):
         grille = self.securite
         if self.bloque(self.securite, x, y):        # déjà dans la marge normale (après un évitement)
             grille = self.secours
-        v_min, v_max = max(-V_RECUL, self.v - A_MAX * DT), min(V_MAX, self.v + A_MAX * DT)
+        v_min, v_max = max(-V_RECUL, self.v - A_MAX * DT), min(self.v_max, self.v + A_MAX * DT)
         w_min, w_max = max(-W_MAX, self.w - ALPHA_MAX * DT), min(W_MAX, self.w + ALPHA_MAX * DT)
 
         meilleur, meilleur_score = None, -math.inf
@@ -218,7 +220,7 @@ class SuiveurDWA(Node):
                 self.alignement = True
                 return
             erreur = angle_normalise(math.atan2(but[1] - y, but[0] - x) - th)
-            v = 0.0 if abs(erreur) > 0.35 else min(V_MAX, 1.5 * dist_but)
+            v = 0.0 if abs(erreur) > 0.35 else min(0.15, 1.5 * dist_but)
             self.commander(v, max(-W_MAX, min(W_MAX, 2.0 * erreur)))
             return
 

@@ -415,3 +415,35 @@ au moment où le robot s'arrête face à la place.
   → évaluation automatique avec les mêmes vitesses (D5)
 
 ![PPO](images/D4_ppo_pieton.gif)
+
+---
+
+## Dynamique — D5 : évaluation automatique et comparaison A* + DWA vs A* + PPO · ✅
+
+- `evaluer.py` : 12 scénarios par conducteur (6 destinations, sans puis avec un piéton qui traverse
+  l'allée devant le robot), robot téléporté à l'entrée entre chaque essai ; mesures : réussite
+  (arrivé < 60 s sans collision), temps, distance, collisions, distance minimale au piéton
+- `comparer.py` : tableau + graphique ; même vitesse max pour tous (0,20 m/s)
+
+| Conducteur | Piéton | Réussite | Temps moyen | Temps perdu (piéton) | Plus près du piéton |
+|---|---|---|---|---|---|
+| A* + suiveur | non | 100 % | 11,3 s | — | — |
+| A* + suiveur | oui | 83 % (1 collision) | 15,3 s | +4,0 s | 4 cm |
+| A* + DWA | non | 100 % | 11,9 s | — | — |
+| A* + DWA | oui | 100 % | 14,6 s | +2,7 s | 14 cm |
+| A* + PPO (+ bouclier) | non | 100 % | 11,8 s | — | — |
+| A* + PPO (+ bouclier) | oui | 100 % | 16,6 s | +4,8 s | 21 cm |
+
+![comparaison](images/D5_comparaison.png)
+
+**Conclusions :**
+- sans piéton, les trois conducteurs se valent ; la différence apparaît face à un obstacle **mobile**
+- le suiveur sans prédiction n'est pas assez sûr (collision quand le piéton arrive de côté)
+- **DWA = le plus efficace** (perd 2,7 s, marge 14 cm) ; **PPO = le plus prudent** (perd 4,8 s,
+  marge ≥ 21 cm, bouclier jamais sollicité) → compromis efficacité / prudence
+- PPO, entraîné en simulation 2D, fonctionne dans Gazebo sur une maquette inconnue (observations locales)
+
+**Limites :** 6 scénarios, 1 essai chacun, piéton au comportement fixe ; tendances, pas une preuve
+statistique. Suite possible : piétons aléatoires, répétitions, plusieurs piétons.
+
+Détails : [comparaison.md](comparaison.md) · données brutes : `docs/resultats/eval_*.csv`
