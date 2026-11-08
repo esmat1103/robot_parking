@@ -322,3 +322,36 @@ au moment où le robot s'arrête face à la place.
   **re-planifie** et rejoint C1 par une autre allée, sans s'arrêter devant
 
 ![D2 obstacle](images/D2_replanification_obstacle.gif)
+
+**Test B (piéton qui traverse, mission C5) :** avec D2 seul, le robot re-planifie un **détour de 2,54 m
+(≈ 33 s au lieu de ≈ 13 s)** au lieu d'attendre 2 à 3 s → il traite le piéton comme un obstacle immobile.
+
+---
+
+## Dynamique — D2b : priorité piéton · ✅
+
+- **planificateur** : un point vu à moins de 12 cm du piéton (`/pieton`) est « mobile ».
+  Obstacle immobile → **contourner** ; piéton → **attendre** ; piéton bloquant **plus de 8 s** → contourner ;
+  piéton parti pendant le détour → **reprendre le chemin le plus court**
+- **sécurité** : arrêt si le piéton est **dans le couloir du robot** (≤ 14 cm de son axe) à moins de 35 cm
+- en simulation, la position du piéton vient du nœud `pieton` ; sur le vrai robot : la vision (YOLO, « person »)
+
+**Bugs trouvés et corrigés en testant :**
+1. cône de ±60° trop large + piéton en allers-retours sans fin → robot bloqué → test « dans le couloir »
+   + piéton qui traverse **une fois**
+2. le piéton restait 3 s en mémoire après son départ → détour inutile alors que le passage était libre
+   → mémoire du piéton réduite à 0,5 s + vérifier qu'il est **toujours là** avant de contourner
+
+**Résultats (mission C5) :**
+
+| Scénario | Comportement | Temps |
+|---|---|---|
+| sans piéton | — | ≈ 13 s |
+| piéton qui traverse, D2 (tout contourner) | détour 2,54 m | ≈ 33 s |
+| piéton qui traverse, **D2b** | attend, puis tout droit | **≈ 15 s** |
+| piéton arrêté 5 s, **D2b** | attend, puis tout droit | ≈ 19 s |
+| piéton arrêté 15 s, **D2b** | attend 8 s, contourne, reprend le chemin court quand il part | ≈ 39 s |
+
+| Piéton arrêté 5 s : le robot attend | Piéton arrêté 15 s : le robot contourne |
+|---|---|
+| ![attente](images/D2b_attente_5s.gif) | ![détour](images/D2b_detour_15s.gif) |

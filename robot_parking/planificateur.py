@@ -13,13 +13,15 @@ Publie :
     /carte_securite  (OccupancyGrid) : les obstacles fixes "gonflés" (zone interdite)
     /obstacles_vus   (OccupancyGrid) : les obstacles imprévus vus par le capteur    [D2]
 
-Re-planification (D2) :
+Re-planification (D2) + priorité piéton (D2b) :
     1. chaque point vu par le capteur, qui n'est PAS un obstacle connu de la carte,
        est noté comme « obstacle imprévu » (et oublié s'il n'est plus vu depuis 3 s :
        un piéton qui passe ne bloque pas la case pour toujours)
     2. deux fois par seconde : si le chemin RESTANT traverse un obstacle imprévu (gonflé),
        A* recalcule un chemin qui le contourne
     3. si aucun contournement n'existe, on garde le chemin : la sécurité fait attendre le robot
+    D2b : un point vu près du PIÉTON (/pieton) est « mobile » : on ne contourne pas,
+    on ATTEND qu'il passe (au plus 8 s), comme un conducteur dans un parking.
 """
 import math
 import time
@@ -31,14 +33,17 @@ from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy, qos_profi
 from nav_msgs.msg import OccupancyGrid, Odometry, Path
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import LaserScan
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Float32MultiArray
 
 from robot_parking.astar import gonfler, astar, case_libre_proche, longueur, simplifier
 
 POSITION_LASER = 0.09      # m : le capteur est 9 cm devant le centre du robot (robot.urdf)
 PORTEE_DETECTION = 0.60    # m : on ne tient compte que des obstacles proches
-MEMOIRE = 3.0              # s : un obstacle non revu depuis 3 s est oublié
+MEMOIRE = 3.0              # s : un obstacle IMMOBILE non revu depuis 3 s est oublié
+MEMOIRE_MOBILE = 0.5       # s : le PIÉTON est oublié vite (on connaît sa position en continu)
 DELAI_REPLANIF = 1.5       # s : au plus une re-planification toutes les 1,5 s
+RAYON_PIETON = 0.12        # m : un point vu à moins de 12 cm du piéton = le piéton (D2b)
+ATTENTE_MAX = 8.0          # s : si un piéton bloque plus longtemps, on contourne quand même (D2b)
 
 
 class Planificateur(Node):
@@ -59,6 +64,8 @@ class Planificateur(Node):
         self.create_subscription(PoseStamped, '/goal_pose', self.recevoir_but, 10)
         self.create_subscription(LaserScan, '/scan', self.recevoir_scan, qos_profile_sensor_data)
         self.create_subscription(Bool, '/arrivee', self.recevoir_arrivee, 10)
+        # D2b : où est le piéton ? (en simulation : nœud pieton ; en vrai : la vision, classe « person »)
+        self.create_subscription(Float32MultiArray, '/pieton', self.recevoir_pieton, 10)
 
         self.pub_plan = self.create_publisher(Path, '/plan', qos_carte)            # chemin lissé
         self.pub_brut = self.create_publisher(Path, '/plan_brut', qos_carte)       # chemin A* brut
@@ -74,7 +81,11 @@ class Planificateur(Node):
 
         self.but = None            # destination en cours (PoseStamped), None = rien à faire
         self.chemin = None         # chemin A* brut en cours (liste de cases)
-        self.vus = {}              # obstacles imprévus : {case: heure de la dernière détection}
+        self.vus = {}              # obstacles imprévus IMMOBILES : {case: heure de la dernière détection}
+        self.vus_mobiles = {}      # obstacles imprévus MOBILES (piéton) : pareil              [D2b]
+        self.pieton = None         # (x, y) du piéton s'il est présent, sinon None            [D2b]
+        self.debut_attente = None  # heure à laquelle on a commencé à attendre le piéton     [D2b]
+        self.detour_pieton = False # True = le chemin actuel est un détour à cause d'un piéton [D2b]
         self.derniere_replanif = 0.0
 
         self.create_timer(0.5, self.surveiller)
@@ -130,12 +141,18 @@ class Planificateur(Node):
 
     def recevoir_but(self, msg):
         self.but = msg
+        self.debut_attente = None
+        self.detour_pieton = False
         self.planifier('nouvelle destination')
 
     def recevoir_arrivee(self, msg):
         if msg.data:
             self.but = None          # mission accomplie : plus de surveillance
             self.chemin = None
+
+    def recevoir_pieton(self, msg):
+        present, x, y = msg.data[0], msg.data[1], msg.data[2]
+        self.pieton = (x, y) if present > 0.5 else None
 
     def recevoir_scan(self, msg):
         """Note chaque point vu par le capteur qui n'est pas un obstacle connu."""
@@ -149,48 +166,89 @@ class Planificateur(Node):
             if not (msg.range_min <= r <= min(msg.range_max, PORTEE_DETECTION)):
                 continue
             a = self.theta + msg.angle_min + i * msg.angle_increment
-            case = self.vers_case(lx + r * math.cos(a), ly + r * math.sin(a))
+            px, py = lx + r * math.cos(a), ly + r * math.sin(a)
+            case = self.vers_case(px, py)
             if self.dans_carte(case) and not self.connu[case]:
-                self.vus[case] = maintenant
+                # D2b : ce point est-il le piéton (mobile) ou un objet immobile ?
+                if self.pieton is not None and math.dist((px, py), self.pieton) < RAYON_PIETON:
+                    self.vus_mobiles[case] = maintenant
+                else:
+                    self.vus[case] = maintenant
 
     # ---------- Re-planification (D2) ----------
-    def obstacles_imprevus(self):
-        """Grille True/False des obstacles imprévus encore « frais » (vus < 3 s)."""
+    def obstacles_imprevus(self, inclure_mobiles=False):
+        """Grille True/False des obstacles imprévus encore « frais » (vus < 3 s).
+        Par défaut : seulement les IMMOBILES (on attend les piétons au lieu de les contourner)."""
         maintenant = time.monotonic()
         self.vus = {c: t for c, t in self.vus.items() if maintenant - t < MEMOIRE}
+        self.vus_mobiles = {c: t for c, t in self.vus_mobiles.items() if maintenant - t < MEMOIRE_MOBILE}
         grille = np.zeros_like(self.bloque)
-        for case in self.vus:
+        for case in list(self.vus) + (list(self.vus_mobiles) if inclure_mobiles else []):
             grille[case] = True
         return grille
 
-    def surveiller(self):
-        """2 fois par seconde : le chemin restant est-il coupé par un obstacle imprévu ?"""
-        if self.carte is None:
-            return
-        imprevus = self.obstacles_imprevus()
-        imprevus_gonfles = gonfler(imprevus, self.rayon_cases) if imprevus.any() else imprevus
-        self.publier_obstacles_vus(imprevus, imprevus_gonfles)
-
-        if (not self.get_parameter('replanification').value or self.but is None
-                or self.chemin is None or self.position is None or not imprevus.any()):
-            return
-        # le chemin RESTANT = à partir du point du chemin le plus proche du robot
+    def chemin_coupe(self, obstacles_gonfles):
+        """Le chemin RESTANT (à partir du point le plus proche du robot) est-il coupé ?"""
         ici = self.vers_case(*self.position)
         k = min(range(len(self.chemin)),
                 key=lambda i: (self.chemin[i][0] - ici[0]) ** 2 + (self.chemin[i][1] - ici[1]) ** 2)
-        coupe = any(imprevus_gonfles[c] for c in self.chemin[k:])
-        if coupe and time.monotonic() - self.derniere_replanif > DELAI_REPLANIF:
-            self.planifier('obstacle imprévu sur le chemin')
+        return any(obstacles_gonfles[c] for c in self.chemin[k:])
 
-    def planifier(self, raison):
+    def surveiller(self):
+        """2 fois par seconde :
+        - obstacle IMMOBILE sur le chemin -> on contourne (re-planification)
+        - PIÉTON sur le chemin -> on attend qu'il passe (la sécurité arrête le robot) ;
+          s'il bloque plus de 8 s, on contourne quand même"""
+        if self.carte is None:
+            return
+        immobiles = self.obstacles_imprevus()
+        tous = self.obstacles_imprevus(inclure_mobiles=True)
+        tous_gonfles = gonfler(tous, self.rayon_cases) if tous.any() else tous
+        self.publier_obstacles_vus(tous, tous_gonfles)
+
+        if (not self.get_parameter('replanification').value or self.but is None
+                or self.chemin is None or self.position is None):
+            return
+        maintenant = time.monotonic()
+
+        # 1) obstacle immobile : contourner
+        if immobiles.any():
+            if (self.chemin_coupe(gonfler(immobiles, self.rayon_cases))
+                    and maintenant - self.derniere_replanif > DELAI_REPLANIF):
+                self.planifier('obstacle imprévu sur le chemin')
+                return
+
+        # 2) piéton : attendre (au plus ATTENTE_MAX secondes)
+        mobiles = tous & ~immobiles
+        if mobiles.any() and self.chemin_coupe(gonfler(mobiles, self.rayon_cases)):
+            if self.debut_attente is None:
+                self.debut_attente = maintenant
+                self.get_logger().info('Piéton sur le chemin : PRIORITÉ PIÉTON, j\'attends qu\'il passe')
+            elif (maintenant - self.debut_attente > ATTENTE_MAX
+                  and maintenant - self.derniere_replanif > DELAI_REPLANIF
+                  and self.pieton is not None):              # il est TOUJOURS là
+                self.get_logger().info(f'Le piéton bloque depuis plus de {ATTENTE_MAX:.0f} s : je contourne')
+                self.planifier('piéton immobile trop longtemps', inclure_mobiles=True)
+                self.detour_pieton = True
+                self.debut_attente = None                  # on n'attend plus : on contourne
+        elif self.debut_attente is not None:
+            self.get_logger().info(f'Passage libre après {maintenant - self.debut_attente:.1f} s '
+                                   f'd\'attente : je continue')
+            self.debut_attente = None
+        elif self.detour_pieton and self.pieton is None:
+            # on avait contourné un piéton, et il est PARTI : on reprend le chemin le plus court
+            self.detour_pieton = False
+            self.planifier('piéton parti, retour au chemin le plus court')
+
+    def planifier(self, raison, inclure_mobiles=False):
         """Calcule (ou recalcule) le chemin vers self.but, en évitant les obstacles
-        fixes ET les obstacles imprévus vus par le capteur."""
+        fixes ET les obstacles imprévus vus par le capteur (piétons seulement si demandé)."""
         if self.carte is None or self.position is None or self.but is None:
             self.get_logger().warn('Pas encore de carte ou de position du robot.')
             return
         self.derniere_replanif = time.monotonic()
 
-        imprevus = self.obstacles_imprevus()
+        imprevus = self.obstacles_imprevus(inclure_mobiles)
         bloque = self.bloque | gonfler(imprevus, self.rayon_cases) if imprevus.any() else self.bloque
 
         depart = self.vers_case(*self.position)
