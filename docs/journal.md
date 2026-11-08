@@ -308,3 +308,17 @@ au moment où le robot s'arrête face à la place.
 - test mission C5 : la sécurité voit le piéton (29 → 22 cm), le robot **ralentit**, le piéton passe,
   le robot repart ; mission réussie
 - limite : face à un obstacle, le robot **attend** ou ralentit, il ne le **contourne** pas encore → D2
+
+---
+
+## Dynamique — D2 : re-planification (le robot contourne) · ✅ test A
+
+- `planificateur.py` écoute maintenant `/scan` : chaque point vu qui n'est pas un obstacle connu
+  devient un **obstacle imprévu** (oublié s'il n'est plus vu depuis 3 s)
+- 2 fois par seconde : si le chemin **restant** traverse un obstacle imprévu (gonflé de 16 cm),
+  A* recalcule un chemin qui le contourne ; sinon (aucun contournement), la sécurité fait attendre
+- obstacles imprévus visibles dans RViz (`/obstacles_vus`) ; `replanification:=False` = ancien comportement
+- **test A** : cube posé dans l'allée de gauche (inconnu de la carte), mission C1 → le robot voit le cube,
+  **re-planifie** et rejoint C1 par une autre allée, sans s'arrêter devant
+
+![D2 obstacle](images/D2_replanification_obstacle.gif)
