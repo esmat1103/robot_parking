@@ -226,6 +226,30 @@ def main():
     <include><uri>model://sun</uri></include>
     <include><uri>model://ground_plane</uri></include>
 
+    <!-- permet à ROS 2 de déplacer un objet du monde (service /set_entity_state) : le piéton -->
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+      <ros><namespace>/</namespace></ros>
+      <update_rate>20</update_rate>
+    </plugin>
+
+    <!-- Piéton (figurine 8 cm de diamètre, 10 cm de haut), déplacé par le nœud pieton.
+         kinematic = c'est notre code qui le bouge (pas la gravité) ;
+         il a une forme de collision pour que le capteur /scan le VOIE. Caché sous le sol au départ. -->
+    <model name="pieton">
+      <pose>-1 -1 -1 0 0 0</pose>
+      <link name="corps">
+        <kinematic>true</kinematic>
+        <gravity>false</gravity>
+        <collision name="collision">
+          <geometry><cylinder><radius>0.04</radius><length>0.10</length></cylinder></geometry>
+        </collision>
+        <visual name="visuel">
+          <geometry><cylinder><radius>0.04</radius><length>0.10</length></cylinder></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
     <gui>
       <camera name="vue">
         <pose>{LARGEUR / 2:.2f} -1.2 2.4 0 0.85 1.5708</pose>

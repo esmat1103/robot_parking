@@ -296,3 +296,15 @@ au moment où le robot s'arrête face à la place.
 - tests : C3 vide ✅, B6 occupée grâce à la plaque ✅, D2 détectée par YOLOv8s ✅
 - installation : PyTorch CPU + `numpy<2` (sinon cv_bridge casse) ; après un `pip install`, si `colcon build`
   échoue sur setuptools → `python3 -m pip uninstall -y setuptools`
+
+---
+
+## Dynamique — D1 : piéton dans Gazebo · ✅
+
+- `pieton.py` : un piéton (cylindre rouge Ø 8 cm, échelle 1:24) fait des allers-retours dans l'allée
+  du milieu à 8 cm/s, 4 s après le départ du robot ; il est déplacé par `/set_entity_state`
+  et publie sa position et sa vitesse sur `/pieton` (pour DWA)
+- il a une **forme de collision** : le capteur `/scan` le voit (sinon il serait invisible pour le robot)
+- test mission C5 : la sécurité voit le piéton (29 → 22 cm), le robot **ralentit**, le piéton passe,
+  le robot repart ; mission réussie
+- limite : face à un obstacle, le robot **attend** ou ralentit, il ne le **contourne** pas encore → D2
