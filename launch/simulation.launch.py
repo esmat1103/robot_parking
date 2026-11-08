@@ -104,10 +104,12 @@ def generate_launch_description():
     # Choix du CONDUCTEUR au lancement (D3) :
     #   ros2 launch robot_parking simulation.launch.py                    -> suiveur (par défaut)
     #   ros2 launch robot_parking simulation.launch.py controleur:=dwa    -> DWA
+    #   ros2 launch robot_parking simulation.launch.py controleur:=ppo    -> PPO + bouclier
     choix = DeclareLaunchArgument('controleur', default_value='suiveur',
-                                  description='suiveur ou dwa')
+                                  description='suiveur, dwa ou ppo')
     si_suiveur = LaunchConfigurationEquals('controleur', 'suiveur')
     si_dwa = LaunchConfigurationEquals('controleur', 'dwa')
+    si_ppo = LaunchConfigurationEquals('controleur', 'ppo')
 
     # 8a. Suiveur « tourner puis avancer » (étape 5) : /plan + /odom -> /cmd_vel_brut
     #     (remapping : il croit publier sur /cmd_vel, mais ça part sur /cmd_vel_brut)
@@ -123,12 +125,25 @@ def generate_launch_description():
         remappings=[('/cmd_vel', '/cmd_vel_brut')],
     )
 
+    # 8c. Conducteur PPO + bouclier (D4) : /plan + /odom + /pieton -> /cmd_vel_brut
+    suiveur_ppo = Node(
+        package='robot_parking', executable='suiveur_ppo', condition=si_ppo,
+        parameters=[temps_simu], output='screen',
+        remappings=[('/cmd_vel', '/cmd_vel_brut')],
+    )
+
     # 9. Sécurité (étape 6) : /cmd_vel_brut + /scan -> /cmd_vel (vers les moteurs)
     #    Avec DWA, l'arrêt « piéton » est plus court (22 cm) : DWA évite lui-même le piéton
     #    et doit pouvoir passer derrière lui ; la sécurité reste le dernier filet.
     securite = Node(
         package='robot_parking', executable='securite', condition=si_suiveur,
         parameters=[{'distance_arret': 0.12, 'distance_ralenti': 0.30}, temps_simu],
+        output='screen',
+    )
+    securite_ppo = Node(
+        package='robot_parking', executable='securite', condition=si_ppo,
+        parameters=[{'distance_arret': 0.12, 'distance_ralenti': 0.30,
+                     'distance_pieton': 0.22}, temps_simu],
         output='screen',
     )
     securite_dwa = Node(
@@ -146,5 +161,5 @@ def generate_launch_description():
 
     return LaunchDescription([choix, gazebo, etat_robot, poser_robot,
                               serveur_carte, allumage_carte, lien_map_odom, rviz,
-                              planificateur, suiveur, suiveur_dwa, securite, securite_dwa,
-                              mission])
+                              planificateur, suiveur, suiveur_dwa, suiveur_ppo,
+                              securite, securite_dwa, securite_ppo, mission])

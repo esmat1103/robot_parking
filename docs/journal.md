@@ -387,3 +387,31 @@ au moment où le robot s'arrête face à la place.
 → à confirmer avec plusieurs essais (évaluation automatique, D5).
 
 ![DWA](images/D3_dwa_pieton.gif)
+
+---
+
+## Dynamique — D4 : conducteur PPO + bouclier de sécurité · ✅
+
+- `suiveur_ppo.py` : le réseau PPO **entraîné dans l'ancien projet** (simulation 2D, 78/90) est
+  réutilisé **sans réentraînement** : ses 19 observations sont **locales** (point de passage, vitesses,
+  9 rayons, piéton vus par le robot) → indépendantes de la carte. 7 actions, 20 décisions/s.
+- **bouclier** : imagine 1,5 s d'avenir ; si l'action est dangereuse → action sûre préférée de PPO
+  ou action d'urgence (reculer)
+- problème : modèle sauvegardé avec numpy 2, projet en numpy 1 (cv_bridge) → on charge seulement
+  les **poids** (`policy.pth`) dans un réseau reconstruit à l'identique (2 × 64 neurones)
+- choix au lancement : `controleur:=ppo`
+
+**Mission C5 (un essai par cas) :**
+
+| Conducteur | Sans piéton | Avec piéton | Temps perdu | Interventions |
+|---|---|---|---|---|
+| Suiveur + D2b | ≈ 13 s | ≈ 15 s | ≈ 2 s | arrêt piéton |
+| DWA | 13,1 s | 14,3 s | ≈ 1 s | 1 ralentissement |
+| PPO + bouclier | 11,6 s | 19,1 s | ≈ 7,5 s | aucune (bouclier 0/282) |
+
+- **transfert réussi** : entraîné en 2D sans inertie, PPO conduit dans Gazebo sur une maquette inconnue
+- PPO plus **prudent** face au piéton ; DWA plus **efficace** (passe derrière)
+- limites : 1 essai par cas ; PPO roule à 0,20 m/s (entraînement) contre 0,15 pour les autres
+  → évaluation automatique avec les mêmes vitesses (D5)
+
+![PPO](images/D4_ppo_pieton.gif)
