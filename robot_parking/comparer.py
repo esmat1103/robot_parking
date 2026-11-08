@@ -72,10 +72,12 @@ def graphique(stats, chemin):
     for i, (p, nom, couleur) in enumerate([('0', 'sans piéton', '#4C72B0'),
                                            ('1', 'avec piéton', '#DD8452')]):
         decal = [v + (i - 0.5) * largeur for v in x]
-        a1.bar(decal, [stats.get((c, p), {}).get('temps', 0) for c in conducteurs],
-               largeur, label=nom, color=couleur)
-        a2.bar(decal, [stats.get((c, p), {}).get('reussite', 0) for c in conducteurs],
-               largeur, label=nom, color=couleur)
+        b1 = a1.bar(decal, [stats.get((c, p), {}).get('temps', 0) for c in conducteurs],
+                    largeur, label=nom, color=couleur)
+        b2 = a2.bar(decal, [stats.get((c, p), {}).get('reussite', 0) for c in conducteurs],
+                    largeur, label=nom, color=couleur)
+        a1.bar_label(b1, fmt='%.1f s', fontsize=8, padding=2)      # valeur au-dessus de la barre
+        a2.bar_label(b2, fmt='%.0f %%', fontsize=8, padding=2)
     for a, titre, unite in [(a1, 'Temps moyen pour atteindre la place', 's'),
                             (a2, 'Taux de réussite', '%')]:
         a.set_xticks(list(x))
@@ -83,9 +85,11 @@ def graphique(stats, chemin):
         a.set_title(titre, fontsize=11)
         a.set_ylabel(unite)
         a.spines[['top', 'right']].set_visible(False)
-        a.legend(frameon=False, fontsize=9)
-    a2.set_ylim(0, 105)
-    fig.tight_layout()
+    a2.set_ylim(0, 115)
+    a1.set_ylim(0, max(b.get_height() for b in a1.patches) * 1.15)
+    poignees, noms = a1.get_legend_handles_labels()
+    fig.legend(poignees, noms, loc='lower center', ncol=2, frameon=False, fontsize=10)
+    fig.tight_layout(rect=(0, 0.07, 1, 1))     # laisse la place à la légende en bas
     fig.savefig(chemin, dpi=130)
 
 
