@@ -107,7 +107,7 @@ def generate_launch_description():
     #   ros2 launch robot_parking simulation.launch.py                    -> suiveur (par défaut)
     #   ros2 launch robot_parking simulation.launch.py controleur:=dwa    -> DWA
     #   ros2 launch robot_parking simulation.launch.py controleur:=ppo    -> PPO + bouclier
-    choix = DeclareLaunchArgument('controleur', default_value='suiveur',
+    choix = DeclareLaunchArgument('controleur', default_value='dwa',
                                   description='suiveur, dwa ou ppo')
     si_suiveur = LaunchConfigurationEquals('controleur', 'suiveur')
     si_dwa = LaunchConfigurationEquals('controleur', 'dwa')
