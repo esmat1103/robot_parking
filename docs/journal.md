@@ -355,3 +355,11 @@ au moment où le robot s'arrête face à la place.
 | Piéton arrêté 5 s : le robot attend | Piéton arrêté 15 s : le robot contourne |
 |---|---|
 | ![attente](images/D2b_attente_5s.gif) | ![détour](images/D2b_detour_15s.gif) |
+
+**Lecture de plaque plus robuste :**
+- **vote** : jusqu'à 3 images lues, on garde la réponse quand 2 lectures concordent
+  (écarte une erreur isolée, ex. un « 5 » lu « 9 »)
+- limite : le vote ne corrige pas une erreur **systématique** (même vue → même erreur) ; elle dépend
+  de la position d'arrêt exacte (observée une fois après un détour)
+- chaque lecture fausse est **enregistrée** dans `~/parking_ws/dataset/erreurs/` (image caméra + contrôle)
+  pour pouvoir la diagnostiquer

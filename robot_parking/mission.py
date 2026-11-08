@@ -17,6 +17,11 @@ Envoyer une mission :
     ros2 topic pub --once /mission std_msgs/msg/String "{data: '199 TUN 8125'}"
 """
 import math
+import os
+import time
+from collections import Counter
+
+import cv2
 
 import rclpy
 from rclpy.node import Node
@@ -32,7 +37,8 @@ from robot_parking.lecture_plaque import lire_plaque_image
 from robot_parking.vision_yolo import detecter_voiture, charger_modele
 
 DUREE_LECTURE = 1.0   # s : on attend que l'image soit stable avant de lire
-ESSAIS_MAX = 3        # nombre d'images essayées si la lecture échoue
+NB_LECTURES = 3       # vote : on lit jusqu'à 3 images et on garde la réponse majoritaire
+ENTRE_LECTURES = 0.3  # s entre deux lectures (images différentes)
 
 
 def lire_plaque_simulee(place):
@@ -56,7 +62,7 @@ class Mission(Node):
                                  qos_profile_sensor_data)
         self.pont = CvBridge()
         self.derniere_image = None
-        self.essais = 0
+        self.lectures = []           # vote : les lectures faites devant la place actuelle
         charger_modele()             # YOLOv8n chargé une fois au démarrage (~1 s)
 
         self.places = calculer_places()
@@ -96,7 +102,8 @@ class Mission(Node):
         # V4 : y a-t-il un véhicule devant le robot ? (YOLOv8s)
         vehicule, _ = detecter_voiture(image)
         # V2 : lecture de la plaque
-        texte, _ = lire_plaque_image(image)
+        texte, controle = lire_plaque_image(image)
+        self.derniere_vue = (image, controle)          # gardée pour enregistrer les erreurs
 
         if vehicule is not None:
             self.get_logger().info(f"YOLO : {vehicule['classe']} détecté "
@@ -127,7 +134,7 @@ class Mission(Node):
         if self.etat == 'EN_ROUTE' and msg.data:
             self.etat = 'LECTURE'
             self.debut_lecture = self.get_clock().now()
-            self.essais = 0
+            self.lectures = []
             self.annoncer(f'Arrivé devant {self.place_actuelle}, lecture de la plaque...')
 
     # ---------- Déroulement ----------
@@ -156,22 +163,39 @@ class Mission(Node):
         self.etat = 'EN_ROUTE'
         self.annoncer(f'En route vers la place {self.place_actuelle} ({x:.2f}, {y:.2f})')
 
+    def enregistrer_erreur(self):
+        """Lecture fausse : on garde l'image caméra et l'image de contrôle pour comprendre."""
+        dossier = os.path.expanduser('~/parking_ws/dataset/erreurs')
+        os.makedirs(dossier, exist_ok=True)
+        nom = f'{self.place_actuelle}_{int(time.time())}'
+        image, controle = self.derniere_vue
+        cv2.imwrite(os.path.join(dossier, f'{nom}_camera.png'), image)
+        cv2.imwrite(os.path.join(dossier, f'{nom}_controle.png'), controle)
+        self.get_logger().warn(f'Lecture fausse enregistrée : {dossier}/{nom}_*.png')
+
     def boucle(self):
         if self.etat != 'LECTURE':
             return
-        if (self.get_clock().now() - self.debut_lecture).nanoseconds * 1e-9 < DUREE_LECTURE:
-            return                                       # on attend une image stable
+        attente = DUREE_LECTURE if not self.lectures else ENTRE_LECTURES
+        if (self.get_clock().now() - self.debut_lecture).nanoseconds * 1e-9 < attente:
+            return                                       # on attend une (nouvelle) image stable
 
-        plaque = self.lire_plaque()
-        if plaque is None and self.essais < ESSAIS_MAX - 1:
-            self.essais += 1                             # lecture ratée : on réessaie
-            self.debut_lecture = self.get_clock().now()  # sur une nouvelle image
-            self.get_logger().info(f'Plaque illisible, nouvel essai ({self.essais + 1}/{ESSAIS_MAX})')
-            return
+        # VOTE : on lit plusieurs images ; dès que 2 lectures sont identiques, c'est la bonne.
+        # Une erreur isolée (ex : un « 5 » lu « 9 » sur une image) est ainsi écartée.
+        self.lectures.append(self.lire_plaque())
+        self.debut_lecture = self.get_clock().now()
+        valides = [l for l in self.lectures if l is not None]
+        plaque, voix = Counter(valides).most_common(1)[0] if valides else (None, 0)
+        if voix < 2 and len(self.lectures) < NB_LECTURES:
+            return                                       # pas encore de majorité : image suivante
+        self.get_logger().info(f'Lectures : {self.lectures} -> vote : {plaque}')
+        self.lectures = []
 
         # contrôle : on compare avec la vérité (tableau PLAQUES ; pas d'entrée = place vide)
         verite = lire_plaque_simulee(self.place_actuelle) or 'VIDE'
         controle = '✅' if plaque == verite else f'❌ (vraie : {verite})'
+        if plaque != verite and getattr(self, 'derniere_vue', None) is not None:
+            self.enregistrer_erreur()
         if plaque == 'VIDE':
             self.annoncer(f'Place {self.place_actuelle} : vide (aucun véhicule vu par YOLO)  {controle}')
         else:
